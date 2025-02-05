@@ -2,8 +2,6 @@ package com.mulesoft.connector.agentforce.internal.connection;
 
 import com.mulesoft.connector.agentforce.internal.botapi.helpers.BotRequestHelper;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
-import com.mulesoft.connector.agentforce.internal.modelsapi.helpers.RequestHelper;
-import com.mulesoft.connector.agentforce.internal.modelsapi.helpers.chatmemory.ChatMemoryHelper;
 import org.mule.runtime.extension.api.connectivity.oauth.ClientCredentialsState;
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.slf4j.Logger;
@@ -19,9 +17,6 @@ public class CustomOAuthClientCredentialsConnection implements AgentforceConnect
   private final String salesforceOrgUrl;
   private final String apiInstanceUrl;
   private final String orgId;
-  private final RequestHelper requestHelper;
-  private final ChatMemoryHelper chatMemoryHelper;
-
   private final BotRequestHelper botRequestHelper;
 
   public CustomOAuthClientCredentialsConnection(String salesforceOrgUrl, ClientCredentialsState clientCredentialsState,
@@ -30,8 +25,6 @@ public class CustomOAuthClientCredentialsConnection implements AgentforceConnect
     this.clientCredentialsState = clientCredentialsState;
     this.apiInstanceUrl = apiInstanceUrl;
     this.orgId = parseOrgId(orgId);
-    this.requestHelper = new RequestHelper(this);
-    this.chatMemoryHelper = new ChatMemoryHelper(requestHelper);
     this.botRequestHelper = new BotRequestHelper(this);
   }
 
@@ -45,7 +38,7 @@ public class CustomOAuthClientCredentialsConnection implements AgentforceConnect
   public void validate() {
     try {
       logger.info("Inside CustomOAuthClientCredentialsConnection validate, salesforceOrg {}", salesforceOrgUrl);
-      botRequestHelper.findRuntimeBaseUrl();
+      botRequestHelper.getAgentList();
     } catch (IOException e) {
       throw new ModuleException("Unable to validate credentials", AgentforceErrorType.INVALID_CONNECTION, e);
 
@@ -62,16 +55,6 @@ public class CustomOAuthClientCredentialsConnection implements AgentforceConnect
 
   public String getOrgId() {
     return orgId;
-  }
-
-  @Override
-  public RequestHelper getRequestHelper() {
-    return requestHelper;
-  }
-
-  @Override
-  public ChatMemoryHelper getChatMemoryHelper() {
-    return chatMemoryHelper;
   }
 
   @Override

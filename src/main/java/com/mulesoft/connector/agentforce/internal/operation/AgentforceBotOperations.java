@@ -3,10 +3,9 @@ package com.mulesoft.connector.agentforce.internal.operation;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentConversationResponseDTO;
 import com.mulesoft.connector.agentforce.internal.error.provider.BotErrorTypeProvider;
-import com.mulesoft.connector.agentforce.internal.botapi.group.BotMessageParameterGroup;
 import com.mulesoft.connector.agentforce.internal.botapi.group.BotAgentParameterGroup;
-import com.mulesoft.connector.agentforce.internal.metadata.AgentConversationResponseMetadataResolver;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
+import com.mulesoft.connector.agentforce.internal.metadata.AgentConversationResponseMetadataResolver;
 import org.json.JSONObject;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -25,6 +24,8 @@ import org.mule.runtime.extension.api.runtime.operation.Result;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
+import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,17 +73,13 @@ public class AgentforceBotOperations {
   public Result<InputStream, InvokeAgentResponseAttributes> continueConversation(@Connection AgentforceConnection connection,
                                                                                  @Content(primary = true) InputStream message,
                                                                                  @Content String sessionId,
-                                                                                 @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
-                                                                                 @ParameterGroup(
-                                                                                     name = "Additional Details") BotMessageParameterGroup messageParameterGroup) {
+                                                                                 @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber) {
     log.info("Executing continue agent conversation operation.");
 
     try {
       AgentConversationResponseDTO responseDTO = connection.getBotRequestHelper().continueSession(message,
                                                                                                   sessionId,
-                                                                                                  messageSequenceNumber,
-                                                                                                  messageParameterGroup
-                                                                                                      .getInReplyToMessageId());
+                                                                                                  messageSequenceNumber);
       return Result.<InputStream, InvokeAgentResponseAttributes>builder()
           .output(toInputStream(responseDTO.getText(), StandardCharsets.UTF_8))
           .attributes(responseDTO.getResponseAttributes())
