@@ -6,9 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mulesoft.connectors</groupId>
     <artifactId>mule4-agentforce-connector</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>mule-extension</packaging>
     <name>Agentforce Connector</name>
+    <description>Agentforce Connector enables developers to easily integrate with AI agents in Salesforce from within Anypoint Platform. It enables Anypoint users to connect external systems with Agentforce agents, allowing them to power new experiences, streamline previously manual processes and deliver on the promise of cutting-edge AI technologies. </description>
 
     <licenses>
         <license>
