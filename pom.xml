@@ -217,6 +217,12 @@
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>${jacoco.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>mtf-tools</artifactId>
+                        <version>1.2.0</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
                 </dependencies>
                 <executions>
                     <execution>
