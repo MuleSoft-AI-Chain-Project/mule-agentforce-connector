@@ -3,7 +3,6 @@ package com.mulesoft.connector.agentforce.internal.connection.provider;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.connection.CustomOAuthClientCredentialsConnection;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
-import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.extension.api.connectivity.oauth.ClientCredentialsState;
@@ -54,10 +53,6 @@ public class CustomOauthClientCredentialsConnectionProvider implements Agentforc
     log.info("Inside CustomOauthClientCredentialsConnectionProvider connect, salesforceOrg {}, apiInstanceUrl = {}",
              salesforceOrgUrl, apiInstanceUrl);
     return new CustomOAuthClientCredentialsConnection(salesforceOrgUrl, clientCredentialsState, apiInstanceUrl, httpClient);
-  }
-
-  public void setClientCredentialsState(ClientCredentialsState clientCredentialsState) {
-    this.clientCredentialsState = clientCredentialsState;
   }
 
   @Override
