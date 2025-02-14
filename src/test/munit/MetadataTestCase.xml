@@ -21,7 +21,7 @@
         </munit:execution>
     </munit:test>
 
-    <mtf:tooling-test name="attributesMetadataTest1">
+    <mtf:tooling-test name="attributesMetadataTest">
         <mtf:get-values parameter="agent">
             <ms-agentforce:start-agent-conversation config-ref="Agentforce_Config" agent="${config.bot-id}" />
         </mtf:get-values>
