@@ -86,7 +86,7 @@ public class BotRequestHelper {
     log.info("Executing getAgentList request with URL: {} ", metadataUrl);
 
     HttpResponse httpResponse = agentforceConnection.getHttpClient().send(buildRequest(metadataUrl, agentforceConnection
-        .getAccessToken(), HTTP_METHOD_GET, null));
+        .getAccessToken(), HTTP_METHOD_GET, new EmptyHttpEntity()));
 
     InputStream inputStream = parseHttpResponse(httpResponse);
 
@@ -225,7 +225,7 @@ public class BotRequestHelper {
                                                                  rootNode, InvokeAgentResponseAttributes.class));
       responseDTO.setSessionId(getTextValue(rootNode, SESSION_ID));
       responseDTO.setText(getMessageText(rootNode));
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new ModuleException("Error in parsing response ", AGENT_OPERATIONS_FAILURE, e);
     }
     return responseDTO;
@@ -269,6 +269,7 @@ public class BotRequestHelper {
                                   CompletionCallback<T, InvokeAgentResponseAttributes> callback,
                                   Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
     if (exception != null) {
+      log.debug("Exception in bot api call ", exception);
       callback.error(exception);
       return;
     }
@@ -276,7 +277,14 @@ public class BotRequestHelper {
     if (contentStream == null) {
       return;
     }
-    callback.success(responseParser.apply(contentStream));
+
+    try {
+      Result<T, InvokeAgentResponseAttributes> result = responseParser.apply(contentStream);
+      callback.success(result);
+    } catch (Exception e) {
+      log.debug("Error while parsing response", e);
+      callback.error(e);
+    }
   }
 
   private InputStream parseHttpResponse(HttpResponse httpResponse) {
