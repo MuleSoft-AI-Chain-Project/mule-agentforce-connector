@@ -15,13 +15,13 @@
 
     <munit:config name="MetadataTestCase.xml" />
 
-    <munit:test name="validBasicConnectionTest">
+    <munit:test name="ValidBasicConnectionTest">
         <munit:execution>
             <mtf:test-connectivity config-ref="Agentforce_Config"/>
         </munit:execution>
     </munit:test>
 
-    <mtf:tooling-test name="attributesMetadataTest1">
+    <mtf:tooling-test name="StartConversationMetadataTest">
         <mtf:get-values parameter="agent">
             <ms-agentforce:start-agent-conversation config-ref="Agentforce_Config" agent="${config.bot-id}" />
         </mtf:get-values>

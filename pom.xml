@@ -10,7 +10,6 @@
     <packaging>mule-extension</packaging>
     <name>Agentforce Connector - Mule 4</name>
     <description>Bring the power of Agentforce to any application or process</description>
-
     <licenses>
         <license>
             <name>MIT License</name>
@@ -216,12 +215,6 @@
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>${jacoco.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.mulesoft.munit</groupId>
-                        <artifactId>mtf-tools</artifactId>
-                        <version>1.2.0</version>
-                        <classifier>mule-plugin</classifier>
                     </dependency>
                 </dependencies>
                 <executions>

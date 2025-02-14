@@ -20,9 +20,4 @@ public class BotAgentParameterGroup {
   public String getAgent() {
     return agent;
   }
-
-  public void setAgent(String agentValue) {
-    this.agent = agentValue;
-  }
-
 }
