@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/mtf  http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+
+    <munit:config name="MetadataTestCase.xml" />
+
+    <munit:test name="ValidBasicConnectionTest">
+        <munit:execution>
+            <mtf:test-connectivity config-ref="Agentforce_Config"/>
+        </munit:execution>
+    </munit:test>
+
+    <mtf:tooling-test name="StartConversationMetadataTest">
+        <mtf:get-values parameter="agent">
+            <ms-agentforce:start-agent-conversation config-ref="Agentforce_Config" agent="${config.bot-id}" />
+        </mtf:get-values>
+        <mtf:validation>
+            <munit-tools:assert-that doc:name="Assert that"
+                                     expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+        </mtf:validation>
+    </mtf:tooling-test>
+</mule>
