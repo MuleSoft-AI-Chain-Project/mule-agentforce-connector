@@ -55,8 +55,8 @@
         <mapdb.version>3.1.0</mapdb.version>
         <jacoco.version>0.8.12</jacoco.version>
         <maven.surefire.version>2.22.2</maven.surefire.version>
-        <munit.extensions.maven.plugin.version>1.2.0</munit.extensions.maven.plugin.version>
-        <munit.version>3.1.0</munit.version>
+        <munit.extensions.maven.plugin.version>1.3.0</munit.extensions.maven.plugin.version>
+        <munit.version>3.2.0</munit.version>
         <mtf.tools.version>1.2.0</mtf.tools.version>
         <runtimeProduct>MULE_EE</runtimeProduct>
     </properties>
@@ -147,14 +147,6 @@
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-api</artifactId>
-            <version>1.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        -->
     </dependencies>
 
     <build>
@@ -287,11 +279,6 @@
             <id>mule-releases</id>
             <name>Nexus Public Releases</name>
             <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>mulesoft-private</id>
-            <name>Mulesoft internal repository</name>
-            <url>https://repository.mulesoft.org/nexus/content/repositories/private/</url>
         </repository>
     </repositories>
     <pluginRepositories>
