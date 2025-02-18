@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mulesoft.connectors</groupId>
     <artifactId>mule4-agentforce-connector</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>mule-extension</packaging>
     <name>Mulesoft Agentforce Connector - Mule 4</name>
     <description>Bring the power of Agentforce to any application or process</description>
@@ -287,6 +287,11 @@
             <id>mule-releases</id>
             <name>Nexus Public Releases</name>
             <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>mulesoft-private</id>
+            <name>Mulesoft internal repository</name>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/private/</url>
         </repository>
     </repositories>
     <pluginRepositories>
