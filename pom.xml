@@ -54,8 +54,8 @@
         <mule.sdk.api.version>0.10.3</mule.sdk.api.version>
         <mapdb.version>3.1.0</mapdb.version>
         <jacoco.version>0.8.12</jacoco.version>
-        <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>
         <maven.surefire.version>2.22.2</maven.surefire.version>
+        <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>
         <munit.version>3.3.2</munit.version>
         <mtf.tools.version>1.2.0</mtf.tools.version>
         <runtimeProduct>MULE_EE</runtimeProduct>
@@ -70,15 +70,24 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.mule.tests</groupId>
-                <artifactId>mule-tests-runner</artifactId>
-                <version>4.6.9</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.mule</groupId>
+            <artifactId>mule-maven-client-api</artifactId>
+            <version>2.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule</groupId>
+            <artifactId>mule-maven-client-impl</artifactId>
+            <version>2.4.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-runner</artifactId>
@@ -98,29 +107,6 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.tests</groupId>
-            <artifactId>mule-tests-unit</artifactId>
-            <version>4.6.9</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mule</groupId>
-            <artifactId>mule-maven-client-api</artifactId>
-            <version>2.4.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mule</groupId>
-            <artifactId>mule-maven-client-impl</artifactId>
-            <version>2.4.1</version>
         </dependency>
 
         <dependency>
