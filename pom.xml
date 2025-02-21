@@ -10,6 +10,12 @@
     <packaging>mule-extension</packaging>
     <name>Mulesoft Agentforce Connector - Mule 4</name>
     <description>Bring the power of Agentforce to any application or process</description>
+    <url>https://mac-project.ai/docs/agentforce/connector-overview</url>
+    <scm>
+        <connection>scm:git:git://github.com/MuleSoft-AI-Chain-Project/mule-agentforce-connector.git</connection>
+        <developerConnection>scm:git:ssh://github.com:MuleSoft-AI-Chain-Project/mule-agentforce-connector.git</developerConnection>
+        <url>https://github.com/MuleSoft-AI-Chain-Project/mule-agentforce-connector/tree/master</url>
+    </scm>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -341,6 +347,10 @@
             <id>mule-releases</id>
             <name>Nexus Public Releases</name>
             <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
     <pluginRepositories>
