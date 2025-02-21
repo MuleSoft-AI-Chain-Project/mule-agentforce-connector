@@ -59,6 +59,8 @@
         <munit.version>3.1.0</munit.version>
         <mtf.tools.version>1.2.0</mtf.tools.version>
         <runtimeProduct>MULE_EE</runtimeProduct>
+        <min.mule.version>4.6.9</min.mule.version>
+        <mule.version>4.6.9</mule.version>
     </properties>
 
     <dependencyManagement>
