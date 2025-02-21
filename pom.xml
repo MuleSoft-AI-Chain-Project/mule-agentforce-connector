@@ -55,8 +55,8 @@
         <mapdb.version>3.1.0</mapdb.version>
         <jacoco.version>0.8.12</jacoco.version>
         <maven.surefire.version>2.22.2</maven.surefire.version>
-        <munit.extensions.maven.plugin.version>1.2.0</munit.extensions.maven.plugin.version>
-        <munit.version>3.1.0</munit.version>
+        <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>
+        <munit.version>3.3.1</munit.version>
         <mtf.tools.version>1.2.0</mtf.tools.version>
         <runtimeProduct>MULE_EE</runtimeProduct>
         <min.mule.version>4.6.9</min.mule.version>
@@ -93,7 +93,6 @@
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-runner</artifactId>
-            <version>4.6.9</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -114,7 +113,6 @@
         <dependency>
         <groupId>org.mule.tests</groupId>
         <artifactId>mule-tests-unit</artifactId>
-        <version>4.6.9</version>
         <scope>test</scope>
         <exclusions>
             <exclusion>
@@ -261,7 +259,7 @@
                         </sharedLibrary>
                     </sharedLibraries>
                     <runtimeProduct>MULE_EE</runtimeProduct>
-                    <runtimeVersion>4.6.9</runtimeVersion>
+                    <runtimeVersion>${mule.version}</runtimeVersion>
                 </configuration>
                 <dependencies>
                     <dependency>
