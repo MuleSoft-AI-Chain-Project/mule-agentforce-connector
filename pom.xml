@@ -67,6 +67,7 @@
         <runtimeProduct>MULE_EE</runtimeProduct>
         <min.mule.version>4.6.9</min.mule.version>
         <mule.version>4.6.9</mule.version>
+        <maven.javadoc.plugin.version>3.8.0</maven.javadoc.plugin.version>
     </properties>
 
     <dependencyManagement>
