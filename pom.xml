@@ -46,7 +46,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-modules-parent</artifactId>
-        <version>1.6.9</version>
+        <version>1.2.0</version>
     </parent>
 
     <properties>
@@ -67,7 +67,6 @@
         <runtimeProduct>MULE_EE</runtimeProduct>
         <min.mule.version>4.6.9</min.mule.version>
         <mule.version>4.6.9</mule.version>
-        <maven.javadoc.plugin.version>3.6.1</maven.javadoc.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -349,11 +348,8 @@
             <name>Nexus Public Releases</name>
             <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
         </repository>
-        <repository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
     </repositories>
+
     <pluginRepositories>
         <pluginRepository>
             <id>mulesoft-releases</id>
