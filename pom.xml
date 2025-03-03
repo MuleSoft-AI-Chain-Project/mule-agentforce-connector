@@ -50,6 +50,7 @@
     </parent>
 
     <properties>
+        <aether.checksums.algorithms>SHA-256,SHA-1</aether.checksums.algorithms>
         <muleJavaEeBomVersion>4.6.9</muleJavaEeBomVersion>
         <skipVerifications>false</skipVerifications>
         <json.version>20240303</json.version>
