@@ -51,7 +51,6 @@
 
     <properties>
         <aether.layout.maven2.checksumAlgorithms>SHA-256</aether.layout.maven2.checksumAlgorithms>
-        <aether.checksums.algorithms>SHA-256</aether.checksums.algorithms>
         <muleJavaEeBomVersion>4.6.9</muleJavaEeBomVersion>
         <skipVerifications>false</skipVerifications>
         <json.version>20240303</json.version>
@@ -350,6 +349,10 @@
             <id>mule-releases</id>
             <name>Nexus Public Releases</name>
             <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
 
