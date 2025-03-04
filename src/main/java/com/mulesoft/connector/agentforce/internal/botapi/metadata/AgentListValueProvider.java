@@ -19,6 +19,8 @@ import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.AGENTFORCE_DEFAULT;
+import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.EINSTEIN_COPILOT;
 import static java.lang.String.format;
 import static org.mule.runtime.extension.api.values.ValueResolvingException.CONNECTION_FAILURE;
 
@@ -33,10 +35,11 @@ public class AgentListValueProvider implements ValueProvider {
   @Override
   public Set<Value> resolve() throws ValueResolvingException {
     try {
-
       return new BotRequestHelper(connection).getAgentList()
           .stream()
-          .filter(agent -> agent.getStatus().equals("Active"))
+          .filter(agent -> agent.getStatus().equals("Active")
+              && !agent.getBotDefinition().getMasterLabel().contains(EINSTEIN_COPILOT)
+              && !agent.getBotDefinition().getMasterLabel().contains(AGENTFORCE_DEFAULT))
           .map(agent -> ValueBuilder
               .newValue(agent.getBotDefinitionId())
               .withDisplayName(constructDisplayName(agent))
