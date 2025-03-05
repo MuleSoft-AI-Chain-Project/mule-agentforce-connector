@@ -37,4 +37,8 @@ public class BotConstantUtil {
   public static final String SLASH = "/";
 
   public static final String SESSION_ENDED = "Session Ended";
+
+  public static final String EINSTEIN_COPILOT = "Einstein Copilot";
+
+  public static final String AGENTFORCE_DEFAULT = "Agentforce (Default)";
 }
