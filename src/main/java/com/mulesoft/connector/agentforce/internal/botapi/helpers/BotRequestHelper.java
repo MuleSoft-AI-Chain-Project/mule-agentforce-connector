@@ -19,6 +19,7 @@ import org.mule.runtime.extension.api.connectivity.oauth.AccessTokenExpiredExcep
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
+import org.mule.runtime.http.api.client.HttpRequestOptions;
 import org.mule.runtime.http.api.domain.entity.EmptyHttpEntity;
 import org.mule.runtime.http.api.domain.entity.HttpEntity;
 import org.mule.runtime.http.api.domain.entity.InputStreamHttpEntity;
@@ -54,6 +55,7 @@ import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConst
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_METADATA_AGENTLIST;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_METADATA_SERVICES_V_62;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_SESSIONS;
+import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_STREAMS;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.V6_URI_BOT_API_BOTS;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.X_SESSION_END_REASON;
 import static com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType.AGENT_OPERATIONS_FAILURE;
@@ -132,6 +134,29 @@ public class BotRequestHelper {
         .getBytes(StandardCharsets.UTF_8));
 
     sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, callback, this::parseResponseForContinueSession);
+  }
+
+  public void continueSessionStream(InputStream message, String sessionId, int messageSequenceNumber,
+                                    CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
+      throws IOException {
+
+    String continueSessionUrl =
+        agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_SESSIONS + SLASH + sessionId
+            + URI_BOT_API_MESSAGES + URI_BOT_API_STREAMS;
+
+    BotContinueSessionRequestDTO payload =
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber);
+
+    log.info("Agentforce continue session stream details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
+
+    log.info("Agentforce continue session stream details. payload: {}", objectMapper.writeValueAsString(payload));
+    InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
+        .getBytes(StandardCharsets.UTF_8));
+
+    // In sendStreamingRequest, we don?t need to pass a parser because, Streaming responses are not received all at once.
+    // Instead, we read each event line-by-line inside handleStreamingResponse().
+    sendStreamingRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, callback);
+
   }
 
   public void endSession(String sessionId, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
@@ -263,6 +288,71 @@ public class BotRequestHelper {
                                                                                                                         : new EmptyHttpEntity()));
 
     completableFuture.whenComplete((response, exception) -> handleResponse(response, exception, callback, responseParser));
+  }
+
+  private void sendStreamingRequest(String url, String httpMethod, InputStream payloadStream,
+                                    CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
+    log.debug("Sending streaming request to URL: {}", url);
+
+    CompletableFuture<HttpResponse> completableFuture = agentforceConnection.getHttpClient().sendAsync(
+                                                                                                       buildRequest(url,
+                                                                                                                    agentforceConnection
+                                                                                                                        .getAccessToken(),
+                                                                                                                    httpMethod,
+                                                                                                                    new InputStreamHttpEntity(payloadStream)));
+
+    // Process response stream as it arrives
+    completableFuture.whenComplete((response, exception) -> {
+      if (exception != null) {
+        log.debug("Exception in bot streaming call", exception);
+        callback.error(exception);
+        return;
+      }
+
+      // Process the HTTP Response Stream
+      handleStreamingResponse(response, callback);
+    });
+  }
+
+  private void handleStreamingResponse(HttpResponse response,
+                                       CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
+    log.debug("Processing streaming response");
+
+    try (BufferedReader reader =
+        new BufferedReader(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        log.debug("Received streaming event: {}", line);
+
+        // Convert response line into DTO
+        AgentConversationResponseDTO responseDTO = parseStreamingEvent(line);
+
+        // Emit response to client
+        callback.success(Result.<InputStream, InvokeAgentResponseAttributes>builder()
+            .output(toInputStream(responseDTO.getText(), StandardCharsets.UTF_8))
+            .attributes(responseDTO.getResponseAttributes())
+            .attributesMediaType(MediaType.APPLICATION_JAVA)
+            .mediaType(MediaType.TEXT)
+            .build());
+      }
+    } catch (IOException e) {
+      log.error("Error processing streaming response", e);
+      callback.error(new ModuleException("Error in processing streaming response", AGENT_OPERATIONS_FAILURE, e));
+    }
+  }
+
+  private AgentConversationResponseDTO parseStreamingEvent(String eventJson) {
+    AgentConversationResponseDTO responseDTO = new AgentConversationResponseDTO();
+    try {
+      JsonNode rootNode = objectMapper.readTree(eventJson);
+      responseDTO.setResponseAttributes(objectMapper.treeToValue(rootNode, InvokeAgentResponseAttributes.class));
+      responseDTO.setSessionId(getTextValue(rootNode, SESSION_ID));
+      responseDTO.setText(getMessageText(rootNode));
+    } catch (Exception e) {
+      log.error("Error parsing streaming event JSON", e);
+      throw new ModuleException("Error parsing streaming event", AGENT_OPERATIONS_FAILURE, e);
+    }
+    return responseDTO;
   }
 
   private <T> void handleResponse(HttpResponse response, Throwable exception,

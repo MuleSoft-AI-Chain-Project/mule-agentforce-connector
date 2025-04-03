@@ -72,6 +72,26 @@ public class AgentforceBotOperations {
   }
 
   @MediaType(value = TEXT_PLAIN, strict = false)
+  @Alias("Continue-agent-conversation-stream")
+  @Throws(BotErrorTypeProvider.class)
+  @OutputResolver(output = AgentConversationResponseMetadataResolver.class)
+  public void continueConversationStream(@Connection AgentforceConnection connection,
+                                         @Content(primary = true) InputStream message,
+                                         @Content String sessionId,
+                                         @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
+                                         CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
+
+    log.info("Executing continue agent conversation operation, sessionId = {}", sessionId);
+
+    try {
+      connection.getBotRequestHelper().continueSessionStream(message, sessionId, messageSequenceNumber, callback);
+    } catch (Exception e) {
+      callback.error(new ModuleException("Error in continue agent conversation for session id: " + sessionId,
+                                         AGENT_OPERATIONS_FAILURE, e));
+    }
+  }
+
+  @MediaType(value = TEXT_PLAIN, strict = false)
   @Alias("End-agent-conversation")
   @Throws(BotErrorTypeProvider.class)
   @OutputResolver(output = AgentConversationResponseMetadataResolver.class)
