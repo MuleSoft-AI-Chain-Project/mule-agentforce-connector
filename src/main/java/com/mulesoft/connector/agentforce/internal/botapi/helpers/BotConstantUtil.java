@@ -41,4 +41,5 @@ public class BotConstantUtil {
   public static final String EINSTEIN_COPILOT = "Einstein Copilot";
 
   public static final String AGENTFORCE_DEFAULT = "Agentforce (Default)";
+  public static final String URI_BOT_API_STREAMS = "/stream";
 }

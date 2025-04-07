@@ -10,9 +10,27 @@ import java.util.Objects;
 public class InvokeAgentResponseAttributes implements Serializable {
 
   private List<Message> messages;
+  private String eventId;
+  private String eventType;
 
   public List<Message> getMessages() {
     return messages;
+  }
+
+  public String getEventId() {
+    return eventId;
+  }
+
+  public void setEventId(String eventId) {
+    this.eventId = eventId;
+  }
+
+  public String getEventType() {
+    return eventType;
+  }
+
+  public void setEventType(String eventType) {
+    this.eventType = eventType;
   }
 
   @Override
@@ -22,12 +40,14 @@ public class InvokeAgentResponseAttributes implements Serializable {
     if (!(o instanceof InvokeAgentResponseAttributes))
       return false;
     InvokeAgentResponseAttributes that = (InvokeAgentResponseAttributes) o;
-    return Objects.equals(getMessages(), that.getMessages());
+    return Objects.equals(getMessages(), that.getMessages()) &&
+        Objects.equals(getEventId(), that.getEventId()) &&
+        Objects.equals(getEventType(), that.getEventType());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getMessages());
+    return Objects.hash(getMessages(), getEventId(), getEventType());
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)

@@ -34,10 +34,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -54,6 +56,7 @@ import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConst
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_METADATA_AGENTLIST;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_METADATA_SERVICES_V_62;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_SESSIONS;
+import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.URI_BOT_API_STREAMS;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.V6_URI_BOT_API_BOTS;
 import static com.mulesoft.connector.agentforce.internal.botapi.helpers.BotConstantUtil.X_SESSION_END_REASON;
 import static com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType.AGENT_OPERATIONS_FAILURE;
@@ -134,6 +137,27 @@ public class BotRequestHelper {
     sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, callback, this::parseResponseForContinueSession);
   }
 
+  public void continueSessionStream(InputStream message, String sessionId, int messageSequenceNumber,
+                                    CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
+      throws IOException {
+
+    String continueSessionUrl =
+        agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_SESSIONS + SLASH + sessionId
+            + URI_BOT_API_MESSAGES + URI_BOT_API_STREAMS;
+
+    BotContinueSessionRequestDTO payload =
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber);
+
+    log.info("Agentforce continue session stream details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
+
+    log.info("Agentforce continue session stream details. payload: {}", objectMapper.writeValueAsString(payload));
+    InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
+        .getBytes(StandardCharsets.UTF_8));
+
+    sendStreamingRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, callback,
+                         this::parseResponseForContinueSessionStream);
+  }
+
   public void endSession(String sessionId, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
     String endSessionUrl =
@@ -203,6 +227,90 @@ public class BotRequestHelper {
         .build();
   }
 
+  private void parseResponseForContinueSessionStream(InputStream responseStream,
+                                                     CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
+
+    List<JSONObject> messageList = new ArrayList<>();
+    StringBuilder fullResponse = new StringBuilder();
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        fullResponse.append(line);
+      }
+      List<String> jsonEvents = splitConcatenatedJsonObjects(fullResponse.toString());
+      for (String jsonEvent : jsonEvents) {
+        handleEvent(jsonEvent, callback, messageList);
+      }
+    } catch (Exception e) {
+      callback.error(e);
+    }
+  }
+
+  private List<String> splitConcatenatedJsonObjects(String input) {
+    List<String> jsonObjects = new ArrayList<>();
+    int braceCount = 0;
+    int start = 0;
+
+    for (int i = 0; i < input.length(); i++) {
+      char c = input.charAt(i);
+      if (c == '{')
+        braceCount++;
+      else if (c == '}')
+        braceCount--;
+
+      if (braceCount == 0 && i > start) {
+        String jsonObject = input.substring(start, i + 1);
+        jsonObjects.add(jsonObject.trim());
+        start = i + 1;
+      }
+    }
+
+    return jsonObjects;
+  }
+
+  private void handleEvent(String jsonChunk, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback,
+                           List<JSONObject> messageList) {
+    try {
+      JSONObject root = new JSONObject(jsonChunk);
+      JSONObject data = root.optJSONObject("data");
+      if (data == null)
+        return;
+      JSONObject message = data.optJSONObject("message");
+      if (message == null)
+        return;
+      String type = message.optString("type");
+      log.info("type = {}", type);
+
+      if ("Inform".equals(type)) {
+        String messageText = message.optString("message", "");
+        log.info("messageText = {} ", messageText);
+        messageList.add(message);
+      } else if ("EndOfTurn".equalsIgnoreCase(type)) {
+        log.info("Received EndOfTurn. You may close the stream or end interaction.");
+        StringBuilder allMessages = new StringBuilder();
+        for (JSONObject msg : messageList) {
+          allMessages.append(msg.optString("message")).append("\n");
+        }
+
+        InvokeAgentResponseAttributes responseAttributes = new InvokeAgentResponseAttributes();
+        responseAttributes.setEventType("EndOfTurn");
+
+        callback.success(Result.<InputStream, InvokeAgentResponseAttributes>builder()
+            .output(toInputStream(allMessages.toString().trim(), StandardCharsets.UTF_8))
+            .attributes(responseAttributes)
+            .attributesMediaType(MediaType.APPLICATION_JAVA)
+            .mediaType(MediaType.TEXT)
+            .build());
+
+        messageList.clear();
+
+      }
+    } catch (Exception e) {
+      log.error("Error parsing SSE event", e);
+      callback.error(e);
+    }
+  }
+
   private Result<InputStream, InvokeAgentResponseAttributes> parseResponseForDeleteSession(InputStream responseStream) {
 
     AgentConversationResponseDTO responseDTO = parseResponse(responseStream);
@@ -265,6 +373,43 @@ public class BotRequestHelper {
     completableFuture.whenComplete((response, exception) -> handleResponse(response, exception, callback, responseParser));
   }
 
+  private <T> void sendStreamingRequest(String url, String httpMethod, InputStream payloadStream,
+                                        CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback,
+                                        BiConsumer<InputStream, CompletionCallback<InputStream, InvokeAgentResponseAttributes>> responseParser) {
+    log.debug("Sending streaming request to URL: {}", url);
+
+    CompletableFuture<HttpResponse> completableFuture = agentforceConnection.getHttpClient().sendAsync(
+                                                                                                       buildRequest(url,
+                                                                                                                    agentforceConnection
+                                                                                                                        .getAccessToken(),
+                                                                                                                    httpMethod,
+                                                                                                                    payloadStream != null
+                                                                                                                        ? new InputStreamHttpEntity(payloadStream)
+                                                                                                                        : new EmptyHttpEntity()));
+
+    // Process response stream as it arrives
+    completableFuture
+        .whenComplete((response, exception) -> handleStreamingResponse(response, exception, callback, responseParser));
+  }
+
+  private void handleStreamingResponse(HttpResponse response, Throwable exception,
+                                       CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback,
+                                       BiConsumer<InputStream, CompletionCallback<InputStream, InvokeAgentResponseAttributes>> responseParser) {
+    if (exception != null) {
+      log.debug("Exception in bot streaming call", exception);
+      callback.error(exception);
+      return;
+    }
+    log.debug("Processing streaming response");
+
+    InputStream contentStream = parseHttpResponse(response, callback);
+
+    if (contentStream == null) {
+      return;
+    }
+    responseParser.accept(contentStream, callback);
+  }
+
   private <T> void handleResponse(HttpResponse response, Throwable exception,
                                   CompletionCallback<T, InvokeAgentResponseAttributes> callback,
                                   Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
@@ -279,8 +424,7 @@ public class BotRequestHelper {
     }
 
     try {
-      Result<T, InvokeAgentResponseAttributes> result = responseParser.apply(contentStream);
-      callback.success(result);
+      callback.success(responseParser.apply(contentStream));
     } catch (Exception e) {
       log.debug("Error while parsing response", e);
       callback.error(e);
