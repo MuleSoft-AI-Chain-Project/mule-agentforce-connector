@@ -1,10 +1,15 @@
 package com.mulesoft.connector.agentforce.internal.connection.provider;
 
+import com.mulesoft.connector.agentforce.api.proxy.HttpProxyConfig;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.connection.CustomOAuthClientCredentialsConnection;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
+import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.connectivity.oauth.ClientCredentialsState;
 import org.mule.runtime.extension.api.annotation.connectivity.oauth.ClientCredentials;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -19,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
 @Alias("oauth-client-credentials")
 @DisplayName("OAuth Client Credentials")
 @ClientCredentials(tokenUrl = "https://{salesforceorg}/services/oauth2/token")
@@ -27,6 +34,16 @@ public class CustomOauthClientCredentialsConnectionProvider implements Agentforc
 
   private static final Logger log = LoggerFactory.getLogger(CustomOauthClientCredentialsConnectionProvider.class);
   private ClientCredentialsState clientCredentialsState;
+
+  /**
+   * Proxy Configuration
+   */
+  @Parameter
+  @Optional
+  @Placement(tab = "Proxy", order = 3)
+  @Expression(NOT_SUPPORTED)
+  @DisplayName("Proxy Configuration")
+  private HttpProxyConfig proxyConfig;
 
   @Inject
   private HttpService httpService;
@@ -63,6 +80,6 @@ public class CustomOauthClientCredentialsConnectionProvider implements Agentforc
   }
 
   private HttpClientConfiguration.Builder httpClientConfigBuilder() {
-    return new HttpClientConfiguration.Builder().setName("http-client");
+    return new HttpClientConfiguration.Builder().setName("http-client").setProxyConfig(proxyConfig);
   }
 }
