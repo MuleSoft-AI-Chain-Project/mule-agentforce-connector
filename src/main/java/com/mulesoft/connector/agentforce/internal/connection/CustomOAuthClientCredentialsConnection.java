@@ -2,6 +2,7 @@ package com.mulesoft.connector.agentforce.internal.connection;
 
 import com.mulesoft.connector.agentforce.internal.botapi.helpers.BotRequestHelper;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
+import org.apache.commons.lang.StringUtils;
 import org.mule.runtime.extension.api.connectivity.oauth.ClientCredentialsState;
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.http.api.client.HttpClient;
@@ -38,8 +39,13 @@ public class CustomOAuthClientCredentialsConnection implements AgentforceConnect
 
   @Override
   public void validate() {
+    logger.info("Inside CustomOAuthClientCredentialsConnection validate, salesforceOrg {}", salesforceOrgUrl);
     try {
-      logger.info("Inside CustomOAuthClientCredentialsConnection validate, salesforceOrg {}", salesforceOrgUrl);
+      if (StringUtils.isBlank(apiInstanceUrl)) {
+        logger.error("Missing Configuration. Api Instance Url is empty");
+        throw new ModuleException("Connection failed. Missing Configuration: Empty API Instance URL",
+                                  AgentforceErrorType.INVALID_CONNECTION);
+      }
       botRequestHelper.getAgentList();
     } catch (IOException | TimeoutException e) {
       throw new ModuleException("Unable to validate credentials", AgentforceErrorType.INVALID_CONNECTION, e);

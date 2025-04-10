@@ -2,14 +2,12 @@ package com.mulesoft.connector.agentforce.internal.extension;
 
 import com.mulesoft.connector.agentforce.api.proxy.DefaultHttpProxyConfig;
 import com.mulesoft.connector.agentforce.api.proxy.HttpProxyConfig;
-import com.mulesoft.connector.agentforce.internal.connection.provider.CustomOauthClientCredentialsConnectionProvider;
-import com.mulesoft.connector.agentforce.internal.operation.AgentforceBotOperations;
+import com.mulesoft.connector.agentforce.internal.botapi.config.AgentforceConfiguration;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
 import org.mule.runtime.api.meta.Category;
+import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Extension;
-import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
-import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 import org.mule.runtime.extension.api.annotation.license.RequiresEnterpriseLicense;
@@ -26,10 +24,9 @@ import static org.mule.sdk.api.meta.JavaVersion.JAVA_8;
 @Xml(prefix = "ms-agentforce")
 @Extension(name = "Agentforce", category = Category.SELECT)
 @ErrorTypes(AgentforceErrorType.class)
-@Operations({AgentforceBotOperations.class})
-@ConnectionProviders(CustomOauthClientCredentialsConnectionProvider.class)
 @SubTypeMapping(baseType = HttpProxyConfig.class, subTypes = {DefaultHttpProxyConfig.class})
 @RequiresEnterpriseLicense(allowEvaluationLicense = true)
 @JavaVersionSupport({JAVA_8, JAVA_11, JAVA_17})
+@Configurations(AgentforceConfiguration.class)
 public class AgentforceConnector {
 }
