@@ -18,7 +18,7 @@ public class AgentforceConnectionParameterGroup {
 
   /**
    * The maximum number of outbound connections that will be kept open at the same time. By default the number of connections is
-   * unlimited.
+   * unlimited. The value -1 means unlimited
    */
   @Parameter
   @Optional(defaultValue = "-1")
@@ -38,7 +38,7 @@ public class AgentforceConnectionParameterGroup {
   @Expression(ExpressionSupport.SUPPORTED)
   @Placement(tab = Placement.ADVANCED_TAB, order = 2)
   @Summary("The amount of time to wait when initially establishing the TCP connection between the connector " +
-      "and Amazon S3 server before throwing an exception if the connection fails.")
+      "and Salesforce Agent before throwing an exception if the connection fails.")
   private int connectionTimeout;
 
   /**
