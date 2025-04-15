@@ -3,6 +3,7 @@ package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
+import com.mulesoft.connector.agentforce.internal.botapi.config.AgentforceConfiguration;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentConversationResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentMetadataResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotContinueSessionRequestDTO;
@@ -19,6 +20,7 @@ import org.mule.runtime.extension.api.connectivity.oauth.AccessTokenExpiredExcep
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
+import org.mule.runtime.http.api.client.HttpRequestOptions;
 import org.mule.runtime.http.api.domain.entity.EmptyHttpEntity;
 import org.mule.runtime.http.api.domain.entity.HttpEntity;
 import org.mule.runtime.http.api.domain.entity.InputStreamHttpEntity;
@@ -96,7 +98,8 @@ public class BotRequestHelper {
     return agentMetadataResponse.getRecords();
   }
 
-  public void startSession(String agentId, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
+  public void startSession(String agentId, AgentforceConfiguration configuration,
+                           CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
     String startSessionUrl = agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_AGENTS
@@ -112,10 +115,11 @@ public class BotRequestHelper {
     InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
         .getBytes(StandardCharsets.UTF_8));
 
-    sendRequest(startSessionUrl, HTTP_METHOD_POST, payloadStream, callback, this::parseResponseForStartSession);
+    sendRequest(startSessionUrl, HTTP_METHOD_POST, payloadStream, configuration, callback, this::parseResponseForStartSession);
   }
 
   public void continueSession(InputStream message, String sessionId, int messageSequenceNumber,
+                              AgentforceConfiguration configuration,
                               CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
@@ -131,17 +135,19 @@ public class BotRequestHelper {
     InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
         .getBytes(StandardCharsets.UTF_8));
 
-    sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, callback, this::parseResponseForContinueSession);
+    sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, configuration, callback,
+                this::parseResponseForContinueSession);
   }
 
-  public void endSession(String sessionId, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
+  public void endSession(String sessionId, AgentforceConfiguration configuration,
+                         CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
     String endSessionUrl =
         agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_SESSIONS + SLASH + sessionId;
 
     log.debug("Agentforce end session details. Request URL: {}, Session ID:{}", endSessionUrl, sessionId);
 
-    sendRequest(endSessionUrl, HTTP_METHOD_DELETE, null, callback, this::parseResponseForDeleteSession);
+    sendRequest(endSessionUrl, HTTP_METHOD_DELETE, null, configuration, callback, this::parseResponseForDeleteSession);
   }
 
   private BotSessionRequestDTO createStartSessionRequestPayload(String externalSessionKey,
@@ -249,9 +255,15 @@ public class BotRequestHelper {
   }
 
   private <T> void sendRequest(String url, String httpMethod, InputStream payloadStream,
+                               AgentforceConfiguration configuration,
                                CompletionCallback<T, InvokeAgentResponseAttributes> callback,
                                Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
     log.debug("Agentforce request details. Request URL: {}", url);
+
+    HttpRequestOptions httpRequestOptions = (configuration.getReadTimeout() != null && configuration.getReadTimeout() > 0
+        && configuration.getReadTimeoutUnit() != null)
+            ? HttpRequestOptions.builder().responseTimeout(configuration.getResponseTimeoutInMillis()).build()
+            : HttpRequestOptions.builder().build();
 
     CompletableFuture<HttpResponse> completableFuture = agentforceConnection.getHttpClient().sendAsync(
                                                                                                        buildRequest(url,
@@ -260,7 +272,8 @@ public class BotRequestHelper {
                                                                                                                     httpMethod,
                                                                                                                     payloadStream != null
                                                                                                                         ? new InputStreamHttpEntity(payloadStream)
-                                                                                                                        : new EmptyHttpEntity()));
+                                                                                                                        : new EmptyHttpEntity()),
+                                                                                                       httpRequestOptions);
 
     completableFuture.whenComplete((response, exception) -> handleResponse(response, exception, callback, responseParser));
   }
