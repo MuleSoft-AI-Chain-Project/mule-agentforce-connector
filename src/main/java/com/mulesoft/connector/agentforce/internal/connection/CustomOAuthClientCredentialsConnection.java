@@ -41,7 +41,7 @@ public class CustomOAuthClientCredentialsConnection implements AgentforceConnect
   public void validate() {
     logger.debug("Inside CustomOAuthClientCredentialsConnection validate, salesforceOrg {}", salesforceOrgUrl);
     try {
-      if (StringUtils.isBlank(apiInstanceUrl)) {
+      if (apiInstanceUrl == null || apiInstanceUrl.trim().isEmpty()) {
         logger.error("Missing Configuration. Api Instance Url is empty");
         throw new ModuleException("Connection failed. Missing Configuration: Empty API Instance URL",
                                   AgentforceErrorType.INVALID_CONNECTION);
