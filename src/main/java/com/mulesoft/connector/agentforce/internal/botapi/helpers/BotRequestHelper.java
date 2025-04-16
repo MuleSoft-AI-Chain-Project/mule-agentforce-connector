@@ -262,7 +262,7 @@ public class BotRequestHelper {
 
     HttpRequestOptions httpRequestOptions = (configuration.getReadTimeout() != null && configuration.getReadTimeout() > 0
         && configuration.getReadTimeoutUnit() != null)
-            ? HttpRequestOptions.builder().responseTimeout(configuration.getResponseTimeoutInMillis()).build()
+            ? HttpRequestOptions.builder().responseTimeout(configuration.getReadTimeoutInMillis()).build()
             : HttpRequestOptions.builder().build();
 
     CompletableFuture<HttpResponse> completableFuture = agentforceConnection.getHttpClient().sendAsync(
