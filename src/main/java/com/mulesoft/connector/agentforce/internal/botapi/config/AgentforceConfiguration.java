@@ -28,7 +28,7 @@ public class AgentforceConfiguration {
   @Parameter
   @Optional
   @Placement(tab = ADVANCED_TAB, order = 1)
-  @Summary("Response timeout value")
+  @Summary("Read timeout value")
   @DisplayName("Read Timeout")
   private Integer readTimeout;
 
@@ -50,7 +50,7 @@ public class AgentforceConfiguration {
     return readTimeoutUnit;
   }
 
-  public Integer getResponseTimeoutInMillis() {
+  public Integer getReadTimeoutInMillis() {
     return Math.toIntExact(readTimeoutUnit.toMillis(readTimeout));
   }
 }
