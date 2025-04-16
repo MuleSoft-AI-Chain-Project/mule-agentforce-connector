@@ -38,8 +38,13 @@ public class CustomOAuthClientCredentialsConnection implements AgentforceConnect
 
   @Override
   public void validate() {
+    logger.debug("Inside CustomOAuthClientCredentialsConnection validate, salesforceOrg {}", salesforceOrgUrl);
     try {
-      logger.info("Inside CustomOAuthClientCredentialsConnection validate, salesforceOrg {}", salesforceOrgUrl);
+      if (apiInstanceUrl == null || apiInstanceUrl.trim().isEmpty()) {
+        logger.error("Missing Configuration. Api Instance Url is empty");
+        throw new ModuleException("Connection failed. Missing Configuration: Empty API Instance URL",
+                                  AgentforceErrorType.INVALID_CONNECTION);
+      }
       botRequestHelper.getAgentList();
     } catch (IOException | TimeoutException e) {
       throw new ModuleException("Unable to validate credentials", AgentforceErrorType.INVALID_CONNECTION, e);
