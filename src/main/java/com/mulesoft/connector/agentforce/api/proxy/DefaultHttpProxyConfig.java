@@ -28,10 +28,6 @@ public class DefaultHttpProxyConfig implements HttpProxyConfig {
   @Optional
   private String nonProxyHosts;
 
-  public DefaultHttpProxyConfig() {
-    // Default constructor for DefaultHttpProxyConfig
-  }
-
   public String getHost() {
     return this.host;
   }
@@ -50,26 +46,6 @@ public class DefaultHttpProxyConfig implements HttpProxyConfig {
 
   public String getNonProxyHosts() {
     return this.nonProxyHosts;
-  }
-
-  public void setHost(String host) {
-    this.host = host;
-  }
-
-  public void setPort(int port) {
-    this.port = port;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public void setNonProxyHosts(String nonProxyHosts) {
-    this.nonProxyHosts = nonProxyHosts;
   }
 
   @Override
