@@ -1,7 +1,8 @@
-package com.mulesoft.connector.agentforce.internal.botapi.config;
+package com.mulesoft.connector.agentforce.internal.config;
 
 import com.mulesoft.connector.agentforce.internal.connection.provider.CustomOauthClientCredentialsConnectionProvider;
 import com.mulesoft.connector.agentforce.internal.operation.AgentforceBotOperations;
+import com.mulesoft.connectors.commons.template.config.ConnectorConfig;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
@@ -19,7 +20,7 @@ import static org.mule.runtime.extension.api.annotation.param.display.Placement.
 @DisplayName("Configuration")
 @Operations({AgentforceBotOperations.class})
 @ConnectionProviders(CustomOauthClientCredentialsConnectionProvider.class)
-public class AgentforceConfiguration {
+public class AgentforceConfiguration implements ConnectorConfig {
 
   /**
    * Specifies the amount of time, in the unit defined in {@link #readTimeoutUnit}, that the consumer will wait for a response
