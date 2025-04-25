@@ -3,7 +3,9 @@ package com.mulesoft.connector.agentforce.internal.config;
 import com.mulesoft.connector.agentforce.internal.connection.provider.CustomOauthClientCredentialsConnectionProvider;
 import com.mulesoft.connector.agentforce.internal.operation.AgentforceBotOperations;
 import com.mulesoft.connectors.commons.template.config.ConnectorConfig;
+import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Configuration;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -27,21 +29,24 @@ public class AgentforceConfiguration implements ConnectorConfig {
    * before it times out.
    */
   @Parameter
-  @Optional
+  @Optional(defaultValue = "30")
+  @DisplayName("Read Timeout")
   @Placement(tab = ADVANCED_TAB, order = 1)
   @Summary("Read timeout value")
-  @DisplayName("Read Timeout")
+  @Expression(ExpressionSupport.SUPPORTED)
   private Integer readTimeout;
 
   /**
    * A {@link TimeUnit} which qualifies the {@link #readTimeout}
    */
   @Parameter
+  @Optional(defaultValue = "SECONDS")
+  @DisplayName("Read Timeout Unit")
   @Placement(tab = ADVANCED_TAB, order = 2)
-  @Optional
   @Summary("Time unit to be used in the Timeout configurations")
-  @DisplayName("Time unit")
+  @Expression(ExpressionSupport.SUPPORTED)
   private TimeUnit readTimeoutUnit;
+
 
   public Integer getReadTimeout() {
     return readTimeout;
@@ -49,9 +54,5 @@ public class AgentforceConfiguration implements ConnectorConfig {
 
   public TimeUnit getReadTimeoutUnit() {
     return readTimeoutUnit;
-  }
-
-  public Integer getReadTimeoutInMillis() {
-    return Math.toIntExact(readTimeoutUnit.toMillis(readTimeout));
   }
 }

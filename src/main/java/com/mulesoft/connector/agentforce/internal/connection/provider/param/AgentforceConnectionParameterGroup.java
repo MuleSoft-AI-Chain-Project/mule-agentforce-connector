@@ -1,13 +1,14 @@
 package com.mulesoft.connector.agentforce.internal.connection.provider.param;
 
 import org.mule.runtime.api.meta.ExpressionSupport;
+import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
-import org.mule.sdk.api.annotation.semantics.connectivity.ExcludeFromConnectivitySchema;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,8 @@ import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 public class AgentforceConnectionParameterGroup {
+
+  private static final String SECURITY_TAB = "Security";
 
   /**
    * The maximum number of outbound connections that will be kept open at the same time. By default the number of connections is
@@ -25,7 +28,6 @@ public class AgentforceConnectionParameterGroup {
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB, order = 1)
   @Summary("The maximum number of outbound connections that will be kept open at the same time")
-  @ExcludeFromConnectivitySchema
   private Integer maxConnections;
 
   /**
@@ -39,6 +41,7 @@ public class AgentforceConnectionParameterGroup {
   @Placement(tab = Placement.ADVANCED_TAB, order = 2)
   @Summary("The amount of time to wait when initially establishing the TCP connection between the connector " +
       "and Salesforce Agent before throwing an exception if the connection fails.")
+  @ConfigOverride
   private int connectionTimeout;
 
   /**
@@ -46,10 +49,11 @@ public class AgentforceConnectionParameterGroup {
    */
   @Parameter
   @Optional(defaultValue = "SECONDS")
-  @DisplayName("Connection Timeout Time Unit")
+  @DisplayName("Connection Timeout Unit")
   @Expression(ExpressionSupport.SUPPORTED)
   @Placement(tab = Placement.ADVANCED_TAB, order = 3)
   @Summary("The time unit for Connection Timeout value.")
+  @ConfigOverride
   private TimeUnit connectionTimeoutUnit;
 
   /**
@@ -61,7 +65,7 @@ public class AgentforceConnectionParameterGroup {
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB, order = 4)
   @Summary("The number of units that a connection can remain idle before it is closed")
-  @ExcludeFromConnectivitySchema
+  @ConfigOverride
   private Integer connectionIdleTimeout;
 
   /**
@@ -72,8 +76,20 @@ public class AgentforceConnectionParameterGroup {
   @Optional(defaultValue = "SECONDS")
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB, order = 5)
-  @ExcludeFromConnectivitySchema
+  @ConfigOverride
   private TimeUnit connectionIdleTimeoutUnit;
+
+  @Parameter
+  @DisplayName("TLS Configuration")
+  @Optional
+  @Expression(NOT_SUPPORTED)
+  @Placement(tab = SECURITY_TAB)
+  @Summary("Protocol to use for communication")
+  private TlsContextFactory tlsContextFactory;
+
+  public Integer getMaxConnections() {
+    return maxConnections;
+  }
 
   public int getConnectionTimeout() {
     return connectionTimeout;
@@ -91,8 +107,8 @@ public class AgentforceConnectionParameterGroup {
     return connectionIdleTimeoutUnit;
   }
 
-  public Integer getMaxConnections() {
-    return maxConnections;
+  public TlsContextFactory getTlsContextFactory() {
+    return tlsContextFactory;
   }
 
   public Integer getConnectionTimeoutInMillis() {

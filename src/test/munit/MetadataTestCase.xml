@@ -21,9 +21,25 @@
         </munit:execution>
     </munit:test>
 
+    <munit:test name="ValidBasicConnectionTestWithProxy">
+        <munit:execution>
+            <mtf:test-connectivity config-ref="Agentforce_Config_With_Proxy"/>
+        </munit:execution>
+    </munit:test>
+
     <mtf:tooling-test name="StartConversationMetadataTest">
         <mtf:get-values parameter="agent">
             <ms-agentforce:start-agent-conversation config-ref="Agentforce_Config" agent="${config.bot-id}" />
+        </mtf:get-values>
+        <mtf:validation>
+            <munit-tools:assert-that doc:name="Assert that"
+                                     expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+        </mtf:validation>
+    </mtf:tooling-test>
+
+    <mtf:tooling-test name="StartConversationMetadataTestWithProxy">
+        <mtf:get-values parameter="agent">
+            <ms-agentforce:start-agent-conversation config-ref="Agentforce_Config_With_Proxy" agent="${config.bot-id}" />
         </mtf:get-values>
         <mtf:validation>
             <munit-tools:assert-that doc:name="Assert that"
