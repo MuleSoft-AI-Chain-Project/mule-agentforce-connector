@@ -1,6 +1,5 @@
 package com.mulesoft.connector.agentforce.internal.connection.provider.param;
 
-import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
@@ -25,7 +24,6 @@ public class AgentforceConnectionParameterGroup {
    */
   @Parameter
   @Optional(defaultValue = "-1")
-  @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB, order = 1)
   @Summary("The maximum number of outbound connections that will be kept open at the same time")
   private Integer maxConnections;
@@ -37,7 +35,6 @@ public class AgentforceConnectionParameterGroup {
   @Parameter
   @Optional(defaultValue = "30")
   @DisplayName("Connection Timeout")
-  @Expression(ExpressionSupport.SUPPORTED)
   @Placement(tab = Placement.ADVANCED_TAB, order = 2)
   @Summary("The amount of time to wait when initially establishing the TCP connection between the connector " +
       "and Salesforce Agent before throwing an exception if the connection fails.")
@@ -50,7 +47,7 @@ public class AgentforceConnectionParameterGroup {
   @Parameter
   @Optional(defaultValue = "SECONDS")
   @DisplayName("Connection Timeout Unit")
-  @Expression(ExpressionSupport.SUPPORTED)
+  @Expression(NOT_SUPPORTED)
   @Placement(tab = Placement.ADVANCED_TAB, order = 3)
   @Summary("The time unit for Connection Timeout value.")
   @ConfigOverride
@@ -62,7 +59,6 @@ public class AgentforceConnectionParameterGroup {
   @Parameter
   @DisplayName("Connection Idle Timeout")
   @Optional(defaultValue = "30")
-  @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB, order = 4)
   @Summary("The number of units that a connection can remain idle before it is closed")
   @ConfigOverride

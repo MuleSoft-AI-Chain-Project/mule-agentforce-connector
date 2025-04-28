@@ -3,7 +3,6 @@ package com.mulesoft.connector.agentforce.internal.config;
 import com.mulesoft.connector.agentforce.internal.connection.provider.CustomOauthClientCredentialsConnectionProvider;
 import com.mulesoft.connector.agentforce.internal.operation.AgentforceBotOperations;
 import com.mulesoft.connectors.commons.template.config.ConnectorConfig;
-import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Configuration;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -16,6 +15,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 @Configuration(name = "config")
@@ -33,7 +33,6 @@ public class AgentforceConfiguration implements ConnectorConfig {
   @DisplayName("Read Timeout")
   @Placement(tab = ADVANCED_TAB, order = 1)
   @Summary("Read timeout value")
-  @Expression(ExpressionSupport.SUPPORTED)
   private Integer readTimeout;
 
   /**
@@ -44,7 +43,7 @@ public class AgentforceConfiguration implements ConnectorConfig {
   @DisplayName("Read Timeout Unit")
   @Placement(tab = ADVANCED_TAB, order = 2)
   @Summary("Time unit to be used in the Timeout configurations")
-  @Expression(ExpressionSupport.SUPPORTED)
+  @Expression(NOT_SUPPORTED)
   private TimeUnit readTimeoutUnit;
 
 
