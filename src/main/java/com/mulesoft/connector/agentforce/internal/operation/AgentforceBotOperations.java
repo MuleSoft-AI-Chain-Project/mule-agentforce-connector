@@ -1,17 +1,16 @@
 package com.mulesoft.connector.agentforce.internal.operation;
 
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
-import com.mulesoft.connector.agentforce.internal.config.AgentforceConfiguration;
 import com.mulesoft.connector.agentforce.internal.error.provider.BotErrorTypeProvider;
 import com.mulesoft.connector.agentforce.internal.botapi.group.BotAgentParameterGroup;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.metadata.AgentConversationResponseMetadataResolver;
+import com.mulesoft.connector.agentforce.internal.params.ReadTimeoutParams;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.metadata.fixed.OutputJsonType;
-import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
@@ -38,16 +37,17 @@ public class AgentforceBotOperations {
   @Alias("Start-agent-conversation")
   @Throws(BotErrorTypeProvider.class)
   @OutputJsonType(schema = "api/response/StartAgentConversationResponse.json")
-  public void startAgentConversation(@Config AgentforceConfiguration configuration,
-                                     @Connection AgentforceConnection connection,
+  public void startAgentConversation(@Connection AgentforceConnection connection,
                                      @Placement(order = 1) @ParameterGroup(
                                          name = "Agent") @MetadataKeyId BotAgentParameterGroup parameterGroup,
+                                     @ParameterGroup(
+                                         name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                                      CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
     log.info("Executing start agent conversation operation, agent = {}", parameterGroup.getAgent());
 
     try {
-      connection.getBotRequestHelper().startSession(parameterGroup.getAgent(), configuration, callback);
+      connection.getBotRequestHelper().startSession(parameterGroup.getAgent(), readTimeout, callback);
     } catch (Exception e) {
       callback.error(new ModuleException("Error while starting agent conversation for agent: " + parameterGroup.getAgent(),
                                          AGENT_OPERATIONS_FAILURE, e));
@@ -58,17 +58,18 @@ public class AgentforceBotOperations {
   @Alias("Continue-agent-conversation")
   @Throws(BotErrorTypeProvider.class)
   @OutputResolver(output = AgentConversationResponseMetadataResolver.class)
-  public void continueConversation(@Config AgentforceConfiguration configuration,
-                                   @Connection AgentforceConnection connection,
+  public void continueConversation(@Connection AgentforceConnection connection,
                                    @Content(primary = true) InputStream message,
                                    @Content String sessionId,
                                    @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
+                                   @ParameterGroup(
+                                       name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                                    CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
     log.info("Executing continue agent conversation operation, sessionId = {}", sessionId);
 
     try {
-      connection.getBotRequestHelper().continueSession(message, sessionId, messageSequenceNumber, configuration, callback);
+      connection.getBotRequestHelper().continueSession(message, sessionId, messageSequenceNumber, readTimeout, callback);
     } catch (Exception e) {
       callback.error(new ModuleException("Error in continue agent conversation for session id: " + sessionId,
                                          AGENT_OPERATIONS_FAILURE, e));
@@ -79,15 +80,16 @@ public class AgentforceBotOperations {
   @Alias("End-agent-conversation")
   @Throws(BotErrorTypeProvider.class)
   @OutputResolver(output = AgentConversationResponseMetadataResolver.class)
-  public void endConversation(@Config AgentforceConfiguration configuration,
-                              @Connection AgentforceConnection connection,
+  public void endConversation(@Connection AgentforceConnection connection,
                               @Content String sessionId,
+                              @ParameterGroup(
+                                  name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
     log.info("Executing end agent conversation operation. sessionId = {}", sessionId);
 
     try {
-      connection.getBotRequestHelper().endSession(sessionId, configuration, callback);
+      connection.getBotRequestHelper().endSession(sessionId, readTimeout, callback);
     } catch (Exception e) {
       callback.error(new ModuleException("Error in end agent conversation for session id: " + sessionId,
                                          AGENT_OPERATIONS_FAILURE, e));
