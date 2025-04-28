@@ -1,4 +1,4 @@
-package com.mulesoft.connector.agentforce.api.proxy;
+package com.mulesoft.connector.agentforce.internal.proxy;
 
 import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
