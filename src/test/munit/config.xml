@@ -23,6 +23,8 @@
             <ms-agentforce:oauth-client-credentials clientId="testId" clientSecret="testSecret" tokenUrl="${config.salesforce-org}" />
         </ms-agentforce:oauth-client-credentials-connection>
     </ms-agentforce:config>
+<!--
+Commenting as cam tool has proxy issue
 
     <ms-agentforce:config name="Agentforce_Config_With_Proxy" doc:name="Agentforce Config With Proxy" doc:id="69efc92c-a8c4-4a80-ac37-1d6e5f51719c" readTimeout="10" readTimeoutUnit="SECONDS">
         <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
@@ -32,16 +34,7 @@
             <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
         </ms-agentforce:oauth-client-credentials-connection>
     </ms-agentforce:config>
-
-    <ms-agentforce:config name="Agentforce_Config_With_Proxy_Error" doc:name="Agentforce Config With Proxy" doc:id="69efc92c-a8c4-4a80-ac37-1d6e5f51719c" readTimeout="10" readTimeoutUnit="SECONDS">
-        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
-            <ms-agentforce:proxy-config >
-                <ms-agentforce:default-http-proxy-config host="host1" port="123" username="test1" password="test2" />
-            </ms-agentforce:proxy-config>
-            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
-        </ms-agentforce:oauth-client-credentials-connection>
-    </ms-agentforce:config>
-
+-->
     <ms-agentforce:config name="Agentforce_Configuration_TLS" doc:name="Agentforce Configuration" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1d" >
         <ms-agentforce:oauth-client-credentials-connection>
             <tls:context >
