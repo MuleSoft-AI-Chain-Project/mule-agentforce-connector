@@ -3,7 +3,6 @@ package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
-import com.mulesoft.connector.agentforce.internal.config.AgentforceConfiguration;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentConversationResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentMetadataResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotContinueSessionRequestDTO;
@@ -12,6 +11,7 @@ import com.mulesoft.connector.agentforce.internal.botapi.dto.BotSessionRequestDT
 import com.mulesoft.connector.agentforce.internal.botapi.dto.InstanceConfigDTO;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
+import com.mulesoft.connector.agentforce.internal.params.ReadTimeoutParams;
 import org.json.JSONObject;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.util.MultiMap;
@@ -98,8 +98,8 @@ public class BotRequestHelper {
     return agentMetadataResponse.getRecords();
   }
 
-  public void startSession(String agentId, AgentforceConfiguration configuration,
-                           CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
+  public void startSession(String agentId,
+                           ReadTimeoutParams readTimeout, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
     String startSessionUrl = agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_AGENTS
@@ -109,17 +109,16 @@ public class BotRequestHelper {
     BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint);
 
     log.debug("Agentforce start session details. Request URL: {}, external Session Key:{}," +
-        " endpoint: {}, payload: {}", startSessionUrl, externalSessionKey, endpoint,
-              objectMapper.writeValueAsString(payload));
+        " endpoint: {}", startSessionUrl, externalSessionKey, endpoint);
 
     InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
         .getBytes(StandardCharsets.UTF_8));
 
-    sendRequest(startSessionUrl, HTTP_METHOD_POST, payloadStream, configuration, callback, this::parseResponseForStartSession);
+    sendRequest(startSessionUrl, HTTP_METHOD_POST, payloadStream, readTimeout, callback, this::parseResponseForStartSession);
   }
 
   public void continueSession(InputStream message, String sessionId, int messageSequenceNumber,
-                              AgentforceConfiguration configuration,
+                              ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
@@ -135,19 +134,19 @@ public class BotRequestHelper {
     InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
         .getBytes(StandardCharsets.UTF_8));
 
-    sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, configuration, callback,
+    sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, readTimeout, callback,
                 this::parseResponseForContinueSession);
   }
 
-  public void endSession(String sessionId, AgentforceConfiguration configuration,
-                         CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
+  public void endSession(String sessionId,
+                         ReadTimeoutParams readTimeout, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
     String endSessionUrl =
         agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_SESSIONS + SLASH + sessionId;
 
     log.debug("Agentforce end session details. Request URL: {}, Session ID:{}", endSessionUrl, sessionId);
 
-    sendRequest(endSessionUrl, HTTP_METHOD_DELETE, null, configuration, callback, this::parseResponseForDeleteSession);
+    sendRequest(endSessionUrl, HTTP_METHOD_DELETE, null, readTimeout, callback, this::parseResponseForDeleteSession);
   }
 
   private BotSessionRequestDTO createStartSessionRequestPayload(String externalSessionKey,
@@ -255,15 +254,13 @@ public class BotRequestHelper {
   }
 
   private <T> void sendRequest(String url, String httpMethod, InputStream payloadStream,
-                               AgentforceConfiguration configuration,
+                               ReadTimeoutParams readTimeout,
                                CompletionCallback<T, InvokeAgentResponseAttributes> callback,
                                Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
     log.debug("Agentforce request details. Request URL: {}", url);
 
-    HttpRequestOptions httpRequestOptions = (configuration.getReadTimeout() != null && configuration.getReadTimeout() > 0
-        && configuration.getReadTimeoutUnit() != null)
-            ? HttpRequestOptions.builder().responseTimeout(configuration.getReadTimeoutInMillis()).build()
-            : HttpRequestOptions.builder().build();
+    HttpRequestOptions httpRequestOptions = HttpRequestOptions.builder()
+        .responseTimeout((int) readTimeout.getReadTimeoutUnit().toMillis(readTimeout.getReadTimeout())).build();
 
     CompletableFuture<HttpResponse> completableFuture = agentforceConnection.getHttpClient().sendAsync(
                                                                                                        buildRequest(url,

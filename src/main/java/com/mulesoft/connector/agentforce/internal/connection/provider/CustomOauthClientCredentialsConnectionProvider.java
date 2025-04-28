@@ -1,12 +1,14 @@
 package com.mulesoft.connector.agentforce.internal.connection.provider;
 
 import com.mulesoft.connector.agentforce.internal.connection.provider.param.AgentforceConnectionParameterGroup;
-import com.mulesoft.connector.agentforce.api.proxy.HttpProxyConfig;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.connection.CustomOAuthClientCredentialsConnection;
+import com.mulesoft.connector.agentforce.internal.proxy.HttpProxyConfig;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
+import org.mule.runtime.core.api.lifecycle.LifecycleUtils;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -67,7 +69,8 @@ public class CustomOauthClientCredentialsConnectionProvider implements Agentforc
   private String apiInstanceUrl;
 
   @Override
-  public void start() {
+  public void start() throws InitialisationException {
+    LifecycleUtils.initialiseIfNeeded(agentforceConnectionParameterGroup.getTlsContextFactory());
     HttpClientConfiguration.Builder baseClientConfigBuilder = httpClientConfigBuilder();
     this.httpClient = httpService.getClientFactory().create(baseClientConfigBuilder.build());
     log.info("Starting httpclient");
@@ -92,7 +95,7 @@ public class CustomOauthClientCredentialsConnectionProvider implements Agentforc
 
   private HttpClientConfiguration.Builder httpClientConfigBuilder() {
     return new HttpClientConfiguration.Builder().setName("http-client")
-        .setProxyConfig(proxyConfig)
+        .setProxyConfig(proxyConfig).setTlsContextFactory(agentforceConnectionParameterGroup.getTlsContextFactory())
         .setClientSocketProperties(TcpClientSocketProperties.builder()
             .connectionTimeout(agentforceConnectionParameterGroup.getConnectionTimeoutInMillis()).build())
         .setMaxConnections(agentforceConnectionParameterGroup.getMaxConnections())

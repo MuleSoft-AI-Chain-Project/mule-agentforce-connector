@@ -3,10 +3,12 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
       xsi:schemaLocation="
         http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-       http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+       http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
     <configuration-properties doc:name="Configuration properties" file="automation-credentials.properties"/>
     
@@ -19,6 +21,42 @@
     <ms-agentforce:config name="Agentforce_Config_Error" doc:name="Agentforce Config Error" doc:id="e2310b9c-aa50-406c-85ae-8bfa200c009a" >
         <ms-agentforce:oauth-client-credentials-connection >
             <ms-agentforce:oauth-client-credentials clientId="testId" clientSecret="testSecret" tokenUrl="${config.salesforce-org}" />
+        </ms-agentforce:oauth-client-credentials-connection>
+    </ms-agentforce:config>
+
+    <ms-agentforce:config name="Agentforce_Config_With_Proxy" doc:name="Agentforce Config With Proxy" doc:id="69efc92c-a8c4-4a80-ac37-1d6e5f51719c" readTimeout="10" readTimeoutUnit="SECONDS">
+        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
+            <ms-agentforce:proxy-config >
+                <ms-agentforce:default-http-proxy-config host="${config.proxy-host}" port="${config.proxy-port}" username="${config.proxy-username}" password="${config.proxy-password}" />
+            </ms-agentforce:proxy-config>
+            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
+        </ms-agentforce:oauth-client-credentials-connection>
+    </ms-agentforce:config>
+
+    <ms-agentforce:config name="Agentforce_Config_With_Proxy_Error" doc:name="Agentforce Config With Proxy" doc:id="69efc92c-a8c4-4a80-ac37-1d6e5f51719c" readTimeout="10" readTimeoutUnit="SECONDS">
+        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
+            <ms-agentforce:proxy-config >
+                <ms-agentforce:default-http-proxy-config host="host1" port="123" username="test1" password="test2" />
+            </ms-agentforce:proxy-config>
+            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
+        </ms-agentforce:oauth-client-credentials-connection>
+    </ms-agentforce:config>
+
+    <ms-agentforce:config name="Agentforce_Configuration_TLS" doc:name="Agentforce Configuration" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1d" >
+        <ms-agentforce:oauth-client-credentials-connection>
+            <tls:context >
+                <tls:key-store type="jks" path="${m4-mutual-tls.keyStore}" keyPassword="${m4-mutual-tls.keyStorePassword}" password="${m4-mutual-tls.keyStorePassword}" />
+            </tls:context>
+            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
+        </ms-agentforce:oauth-client-credentials-connection>
+    </ms-agentforce:config>
+
+    <ms-agentforce:config name="Agentforce_Configuration_TLS_ERROR" doc:name="Agentforce Configuration" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1d" >
+        <ms-agentforce:oauth-client-credentials-connection>
+            <tls:context >
+                <tls:key-store type="jks" path="${m4-mutual-tls.keyStore}" keyPassword="${m4-mutual-tls.keyStorePassword}" password="${m4-mutual-tls.keyStorePassword}" />
+            </tls:context>
+            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="test" tokenUrl="${config.salesforce-org}" />
         </ms-agentforce:oauth-client-credentials-connection>
     </ms-agentforce:config>
 </mule>
