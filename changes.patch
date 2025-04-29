@@ -1,0 +1,188 @@
+From 6cfa7b339c5d718e8694aab1e78d1e99fcb7c784 Mon Sep 17 00:00:00 2001
+From: sf-vishwastyagi <vishwas.tyagi@salesforce.com>
+Date: Tue, 29 Apr 2025 10:35:39 +0530
+Subject: [PATCH] Commenting proxy code as cam tool does not support current
+ proxy service
+
+---
+ src/test/munit/AgentOperationWithProxy.xml |   6 ++++--
+ src/test/munit/MetadataTestCase.xml        |   8 +++++++-
+ src/test/munit/config.xml                  |  13 +++----------
+ src/test/resources/mutualtls.jks           | Bin 0 -> 3910 bytes
+ 4 files changed, 14 insertions(+), 13 deletions(-)
+ create mode 100644 src/test/resources/mutualtls.jks
+
+diff --git a/src/test/munit/AgentOperationWithProxy.xml b/src/test/munit/AgentOperationWithProxy.xml
+index f150a0a..27251ae 100644
+--- a/src/test/munit/AgentOperationWithProxy.xml
++++ b/src/test/munit/AgentOperationWithProxy.xml
+@@ -12,7 +12,8 @@
+         http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+ 
+     <munit:config name="AgentOperationWithProxy.xml"/>
+-
++<!--
++    Commenting this code as cam tool does not support this proxy. Need some other public proxy server
+     <munit:test name="StartAgentTest">
+         <munit:execution>
+             <logger level="INFO" doc:name="Logger" doc:id="301239c9-3db7-4896-84e8-3febe24636c5" message="Calling StartAgentTest"/>
+@@ -27,8 +28,9 @@
+     <munit:after-test name="new-test-suiteAfter_Test" doc:id="fa1c061a-85f3-480f-96bb-9cc305aa49c3" >
+         <ms-agentforce:end-agent-conversation doc:name="End agent conversation" doc:id="46c41ed7-88f7-49ea-8025-89a21c1524cf" config-ref="Agentforce_Config_With_Proxy">
+             <ms-agentforce:session-id ><![CDATA[#[output application/json
+----
++
+ payload.sessionId]]]></ms-agentforce:session-id>
+         </ms-agentforce:end-agent-conversation>
+     </munit:after-test>
++    -->
+ </mule>
+diff --git a/src/test/munit/MetadataTestCase.xml b/src/test/munit/MetadataTestCase.xml
+index f83c9a1..4ff3bd3 100644
+--- a/src/test/munit/MetadataTestCase.xml
++++ b/src/test/munit/MetadataTestCase.xml
+@@ -20,13 +20,15 @@
+             <mtf:test-connectivity config-ref="Agentforce_Config"/>
+         </munit:execution>
+     </munit:test>
++<!--
++    Commenting this code as cam tool does not support this proxy. Need some other public proxy server
+ 
+     <munit:test name="ValidBasicConnectionTestWithProxy">
+         <munit:execution>
+             <mtf:test-connectivity config-ref="Agentforce_Config_With_Proxy"/>
+         </munit:execution>
+     </munit:test>
+-
++-->
+     <mtf:tooling-test name="StartConversationMetadataTest">
+         <mtf:get-values parameter="agent">
+             <ms-agentforce:start-agent-conversation config-ref="Agentforce_Config" agent="${config.bot-id}" />
+@@ -37,6 +39,9 @@
+         </mtf:validation>
+     </mtf:tooling-test>
+ 
++    <!--
++        Commenting this code as cam tool does not support this proxy. Need some other public proxy server
++
+     <mtf:tooling-test name="StartConversationMetadataTestWithProxy">
+         <mtf:get-values parameter="agent">
+             <ms-agentforce:start-agent-conversation config-ref="Agentforce_Config_With_Proxy" agent="${config.bot-id}" />
+@@ -46,4 +51,5 @@
+                                      expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+         </mtf:validation>
+     </mtf:tooling-test>
++    -->
+ </mule>
+diff --git a/src/test/munit/config.xml b/src/test/munit/config.xml
+index 1b01b6f..1889d60 100644
+--- a/src/test/munit/config.xml
++++ b/src/test/munit/config.xml
+@@ -23,6 +23,8 @@
+             <ms-agentforce:oauth-client-credentials clientId="testId" clientSecret="testSecret" tokenUrl="${config.salesforce-org}" />
+         </ms-agentforce:oauth-client-credentials-connection>
+     </ms-agentforce:config>
++<!--
++Commenting this code as cam tool does not support this proxy. Need some other public proxy server
+ 
+     <ms-agentforce:config name="Agentforce_Config_With_Proxy" doc:name="Agentforce Config With Proxy" doc:id="69efc92c-a8c4-4a80-ac37-1d6e5f51719c" readTimeout="10" readTimeoutUnit="SECONDS">
+         <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
+@@ -32,16 +34,7 @@
+             <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
+         </ms-agentforce:oauth-client-credentials-connection>
+     </ms-agentforce:config>
+-
+-    <ms-agentforce:config name="Agentforce_Config_With_Proxy_Error" doc:name="Agentforce Config With Proxy" doc:id="69efc92c-a8c4-4a80-ac37-1d6e5f51719c" readTimeout="10" readTimeoutUnit="SECONDS">
+-        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
+-            <ms-agentforce:proxy-config >
+-                <ms-agentforce:default-http-proxy-config host="host1" port="123" username="test1" password="test2" />
+-            </ms-agentforce:proxy-config>
+-            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
+-        </ms-agentforce:oauth-client-credentials-connection>
+-    </ms-agentforce:config>
+-
++-->
+     <ms-agentforce:config name="Agentforce_Configuration_TLS" doc:name="Agentforce Configuration" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1d" >
+         <ms-agentforce:oauth-client-credentials-connection>
+             <tls:context >
+diff --git a/src/test/resources/mutualtls.jks b/src/test/resources/mutualtls.jks
+new file mode 100644
+index 0000000000000000000000000000000000000000..f8b7bcfb9322c1823ea55aff4e6132a7ae01b5df
+GIT binary patch
+literal 3910
+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
+PiJGL8DyB=XFiZajUBX2Z
+
+literal 0
+HcmV?d00001
+
+-- 
+2.47.0
+
