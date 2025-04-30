@@ -3,6 +3,7 @@ package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
+import com.mulesoft.connector.agentforce.internal.config.AgentforceConfiguration;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentConversationResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentMetadataResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotContinueSessionRequestDTO;
@@ -98,8 +99,9 @@ public class BotRequestHelper {
     return agentMetadataResponse.getRecords();
   }
 
-  public void startSession(String agentId,
-                           ReadTimeoutParams readTimeout, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
+
+  public void startSession(String agentId, ReadTimeoutParams readTimeout,
+                           CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
     String startSessionUrl = agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_AGENTS
@@ -138,8 +140,8 @@ public class BotRequestHelper {
                 this::parseResponseForContinueSession);
   }
 
-  public void endSession(String sessionId,
-                         ReadTimeoutParams readTimeout, CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
+  public void endSession(String sessionId, ReadTimeoutParams readTimeout,
+                         CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
     String endSessionUrl =
         agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_SESSIONS + SLASH + sessionId;
