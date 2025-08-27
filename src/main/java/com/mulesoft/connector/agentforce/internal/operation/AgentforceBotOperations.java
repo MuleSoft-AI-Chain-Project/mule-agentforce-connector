@@ -47,7 +47,9 @@ public class AgentforceBotOperations {
     log.info("Executing start agent conversation operation, agent = {}", parameterGroup.getAgent());
 
     try {
-      connection.getBotRequestHelper().startSession(parameterGroup.getAgent(), readTimeout, callback);
+      connection.getBotRequestHelper().startSession(parameterGroup.getAgent(), parameterGroup.getByPassUser(), readTimeout,
+                                                    callback);
+
     } catch (Exception e) {
       callback.error(new ModuleException("Error while starting agent conversation for agent: " + parameterGroup.getAgent(),
                                          AGENT_OPERATIONS_FAILURE, e));

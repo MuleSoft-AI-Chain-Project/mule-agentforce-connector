@@ -6,6 +6,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
+
 import java.util.Objects;
 
 @TypeDsl(allowTopLevelDefinition = true)
@@ -20,10 +21,12 @@ public class DefaultHttpProxyConfig implements HttpProxyConfig {
   @Parameter
   @Optional
   private String username;
+
   @Parameter
   @Optional
   @Password
   private String password;
+
   @Parameter
   @Optional
   private String nonProxyHosts;

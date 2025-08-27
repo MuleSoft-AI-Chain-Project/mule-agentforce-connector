@@ -1,9 +1,12 @@
 package com.mulesoft.connector.agentforce.internal.extension;
 
+
 import com.mulesoft.connector.agentforce.internal.proxy.DefaultHttpProxyConfig;
 import com.mulesoft.connector.agentforce.internal.proxy.HttpProxyConfig;
 import com.mulesoft.connector.agentforce.internal.config.AgentforceConfiguration;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
+import com.mulesoft.connector.agentforce.internal.proxy.DefaultHttpProxyConfig;
+import com.mulesoft.connector.agentforce.internal.proxy.HttpProxyConfig;
 import org.mule.runtime.api.meta.Category;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Extension;
