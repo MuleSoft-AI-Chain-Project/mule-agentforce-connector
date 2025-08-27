@@ -3,6 +3,7 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" 
+
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
       xsi:schemaLocation="
@@ -46,3 +47,4 @@
         </ms-agentforce:end-agent-conversation>
     </munit:after-test>
 </mule> 
+

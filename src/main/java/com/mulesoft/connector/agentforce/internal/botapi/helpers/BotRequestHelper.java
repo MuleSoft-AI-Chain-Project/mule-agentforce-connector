@@ -101,6 +101,7 @@ public class BotRequestHelper {
 
 
   public void startSession(String agentId, boolean byPassUser, ReadTimeoutParams readTimeout,
+
                            CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
@@ -108,7 +109,9 @@ public class BotRequestHelper {
         + agentId + URI_BOT_API_SESSIONS;
     String externalSessionKey = UUID.randomUUID().toString();
     String endpoint = agentforceConnection.getSalesforceOrgUrl();
+
     BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser);
+
 
     log.debug("Agentforce start session details. Request URL: {}, external Session Key:{}," +
         " endpoint: {}", startSessionUrl, externalSessionKey, endpoint);
@@ -158,6 +161,7 @@ public class BotRequestHelper {
     InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
     instanceConfigDTO.setEndpoint(endpoint);
     return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser);
+
   }
 
   private BotContinueSessionRequestDTO createContinueSessionRequestPayload(String message,
@@ -277,6 +281,7 @@ public class BotRequestHelper {
 
     completableFuture.whenComplete((response, exception) -> handleResponse(response, exception, callback, responseParser));
   }
+
 
   private <T> void handleResponse(HttpResponse response, Throwable exception,
                                   CompletionCallback<T, InvokeAgentResponseAttributes> callback,

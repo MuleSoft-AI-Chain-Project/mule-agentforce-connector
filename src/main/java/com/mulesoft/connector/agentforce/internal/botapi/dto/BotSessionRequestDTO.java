@@ -14,6 +14,7 @@ public class BotSessionRequestDTO {
     this.externalSessionKey = externalSessionKey;
     this.instanceConfig = instanceConfig;
     this.bypassUser = byPassUser;
+
   }
 
   public String getExternalSessionKey() {
@@ -23,8 +24,9 @@ public class BotSessionRequestDTO {
   public InstanceConfigDTO getInstanceConfig() {
     return instanceConfig;
   }
-
+  
   public boolean getBypassUser() {
     return bypassUser;
   }
+
 }

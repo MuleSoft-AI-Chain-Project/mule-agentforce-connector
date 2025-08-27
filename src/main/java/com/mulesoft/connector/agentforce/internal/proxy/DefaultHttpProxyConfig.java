@@ -4,6 +4,8 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
+
 
 import java.util.Objects;
 
@@ -11,11 +13,11 @@ import java.util.Objects;
 public class DefaultHttpProxyConfig implements HttpProxyConfig {
 
   @Parameter
+  @Placement(order = 1)
   private String host;
-
   @Parameter
+  @Placement(order = 2)
   private int port = 2147483647;
-
   @Parameter
   @Optional
   private String username;

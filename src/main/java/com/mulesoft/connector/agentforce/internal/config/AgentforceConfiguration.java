@@ -15,8 +15,10 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.util.concurrent.TimeUnit;
 
+
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+
 
 @Configuration(name = "config")
 @DisplayName("Configuration")

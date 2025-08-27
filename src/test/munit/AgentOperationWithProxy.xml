@@ -14,6 +14,7 @@
     <munit:config name="AgentOperationWithProxy.xml"/>
 <!--
     Commenting this code as cam tool does not support this proxy. Need some other public proxy server
+
     <munit:test name="StartAgentTest">
         <munit:execution>
             <logger level="INFO" doc:name="Logger" doc:id="301239c9-3db7-4896-84e8-3febe24636c5" message="Calling StartAgentTest"/>
@@ -34,3 +35,4 @@ payload.sessionId]]]></ms-agentforce:session-id>
     </munit:after-test>
     -->
 </mule>
+
