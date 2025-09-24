@@ -199,7 +199,7 @@ public class BotRequestHelper {
         .build();
   }
 
-  private Result<InputStream, InvokeAgentResponseAttributes> parseResponseForContinueSession(InputStream responseStream) {
+  Result<InputStream, InvokeAgentResponseAttributes> parseResponseForContinueSession(InputStream responseStream) {
 
     AgentConversationResponseDTO responseDTO = parseResponse(responseStream);
 
