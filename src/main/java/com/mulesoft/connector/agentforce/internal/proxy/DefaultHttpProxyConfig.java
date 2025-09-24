@@ -14,16 +14,20 @@ public class DefaultHttpProxyConfig implements HttpProxyConfig {
   @Parameter
   @Placement(order = 1)
   private String host;
+
   @Parameter
   @Placement(order = 2)
   private int port = 2147483647;
+
   @Parameter
   @Optional
   private String username;
+
   @Parameter
   @Optional
   @Password
   private String password;
+
   @Parameter
   @Optional
   private String nonProxyHosts;

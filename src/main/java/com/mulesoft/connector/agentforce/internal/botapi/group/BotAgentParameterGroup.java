@@ -3,6 +3,7 @@ package com.mulesoft.connector.agentforce.internal.botapi.group;
 import com.mulesoft.connector.agentforce.internal.botapi.metadata.AgentListValueProvider;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
@@ -20,4 +21,16 @@ public class BotAgentParameterGroup {
   public String getAgent() {
     return agent;
   }
+
+  @Parameter
+  @Placement(order = 2)
+  @Expression(value = ExpressionSupport.SUPPORTED)
+  @Optional(defaultValue = "#[false]")
+  @DisplayName("Bypass User")
+  private boolean byPassUser;
+
+  public boolean getByPassUser() {
+    return byPassUser;
+  }
+
 }
