@@ -21,7 +21,7 @@
         </munit:execution>
     </munit:test>
 <!--
-    Commenting this code as cam tool does not support
+    Commenting this code as cam tool does not support this proxy. Need some other public proxy server
 
     <munit:test name="ValidBasicConnectionTestWithProxy">
         <munit:execution>
@@ -39,8 +39,8 @@
         </mtf:validation>
     </mtf:tooling-test>
 
-<!--
-    Commenting this code as cam tool does not support
+    <!--
+        Commenting this code as cam tool does not support this proxy. Need some other public proxy server
 
     <mtf:tooling-test name="StartConversationMetadataTestWithProxy">
         <mtf:get-values parameter="agent">
@@ -51,5 +51,5 @@
                                      expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
         </mtf:validation>
     </mtf:tooling-test>
--->
+    -->
 </mule>

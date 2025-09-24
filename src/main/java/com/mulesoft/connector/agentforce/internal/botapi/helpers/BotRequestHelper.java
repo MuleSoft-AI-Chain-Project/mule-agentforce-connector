@@ -99,7 +99,8 @@ public class BotRequestHelper {
     return agentMetadataResponse.getRecords();
   }
 
-  public void startSession(String agentId, ReadTimeoutParams readTimeout,
+
+  public void startSession(String agentId, boolean byPassUser, ReadTimeoutParams readTimeout,
                            CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
@@ -107,7 +108,7 @@ public class BotRequestHelper {
         + agentId + URI_BOT_API_SESSIONS;
     String externalSessionKey = UUID.randomUUID().toString();
     String endpoint = agentforceConnection.getSalesforceOrgUrl();
-    BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint);
+    BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser);
 
     log.debug("Agentforce start session details. Request URL: {}, external Session Key:{}," +
         " endpoint: {}", startSessionUrl, externalSessionKey, endpoint);
@@ -151,11 +152,12 @@ public class BotRequestHelper {
   }
 
   private BotSessionRequestDTO createStartSessionRequestPayload(String externalSessionKey,
-                                                                String endpoint) {
+                                                                String endpoint,
+                                                                boolean byPassUser) {
 
     InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
     instanceConfigDTO.setEndpoint(endpoint);
-    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO);
+    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser);
   }
 
   private BotContinueSessionRequestDTO createContinueSessionRequestPayload(String message,
@@ -197,7 +199,7 @@ public class BotRequestHelper {
         .build();
   }
 
-  private Result<InputStream, InvokeAgentResponseAttributes> parseResponseForContinueSession(InputStream responseStream) {
+  Result<InputStream, InvokeAgentResponseAttributes> parseResponseForContinueSession(InputStream responseStream) {
 
     AgentConversationResponseDTO responseDTO = parseResponse(responseStream);
 

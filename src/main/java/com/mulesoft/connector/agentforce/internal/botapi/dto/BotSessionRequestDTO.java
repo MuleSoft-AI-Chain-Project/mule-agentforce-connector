@@ -7,11 +7,13 @@ public class BotSessionRequestDTO {
 
   private final String externalSessionKey;
   private final InstanceConfigDTO instanceConfig;
+  private final boolean bypassUser;
 
-  public BotSessionRequestDTO(String externalSessionKey, InstanceConfigDTO instanceConfig) {
+  public BotSessionRequestDTO(String externalSessionKey, InstanceConfigDTO instanceConfig, Boolean byPassUser) {
 
     this.externalSessionKey = externalSessionKey;
     this.instanceConfig = instanceConfig;
+    this.bypassUser = byPassUser;
   }
 
   public String getExternalSessionKey() {
@@ -20,5 +22,9 @@ public class BotSessionRequestDTO {
 
   public InstanceConfigDTO getInstanceConfig() {
     return instanceConfig;
+  }
+
+  public boolean getBypassUser() {
+    return bypassUser;
   }
 }
