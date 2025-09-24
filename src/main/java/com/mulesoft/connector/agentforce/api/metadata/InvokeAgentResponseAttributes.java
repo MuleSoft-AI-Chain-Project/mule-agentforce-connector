@@ -16,10 +16,6 @@ public class InvokeAgentResponseAttributes implements Serializable {
     return messages;
   }
 
-  public void setMessages(List<Message> messages) {
-    this.messages = messages;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -78,26 +74,6 @@ public class InvokeAgentResponseAttributes implements Serializable {
 
     public List<Collect> getCollect() {
       return collect;
-    }
-
-    public void setCollect(List<Collect> collect) {
-      this.collect = collect;
-    }
-
-    public void setType(String type) {
-      this.type = type;
-    }
-
-    public void setId(String id) {
-      this.id = id;
-    }
-
-    public void setMessage(String message) {
-      this.message = message;
-    }
-
-    public void setContentSafe(boolean contentSafe) {
-      this.isContentSafe = contentSafe;
     }
   }
 }

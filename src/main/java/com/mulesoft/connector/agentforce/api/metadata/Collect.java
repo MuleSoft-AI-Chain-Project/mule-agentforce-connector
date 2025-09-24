@@ -21,33 +21,12 @@ public class Collect implements Serializable {
     return targetType;
   }
 
-  public void setTargetType(String targetType) {
-    this.targetType = targetType;
-  }
-
   public String getTargetProperty() {
     return targetProperty;
   }
 
-  public void setTargetProperty(String targetProperty) {
-    this.targetProperty = targetProperty;
-  }
-
   public CollectData getData() {
     return data;
-  }
-
-  public void setData(CollectData data) {
-    this.data = data;
-  }
-
-  @Override
-  public String toString() {
-    return "Collect{" +
-        "targetType='" + targetType + '\'' +
-        ", targetProperty='" + targetProperty + '\'' +
-        ", data=" + data +
-        '}';
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
@@ -64,33 +43,12 @@ public class Collect implements Serializable {
       return type;
     }
 
-    public void setType(String type) {
-      this.type = type;
-    }
-
     public String getProperty() {
       return property;
     }
 
-    public void setProperty(String property) {
-      this.property = property;
-    }
-
     public List<SearchResult> getValue() {
       return value;
-    }
-
-    public void setValue(List<SearchResult> value) {
-      this.value = value;
-    }
-
-    @Override
-    public String toString() {
-      return "CollectData{" +
-          "type='" + type + '\'' +
-          ", property='" + property + '\'' +
-          ", value=" + value +
-          '}';
     }
   }
 
@@ -112,53 +70,23 @@ public class Collect implements Serializable {
       return id;
     }
 
-    public void setId(String id) {
-      this.id = id;
-    }
-
     public SObjectInfo getSObjectInfo() {
       return sObjectInfo;
-    }
-
-    public void setSObjectInfo(SObjectInfo sObjectInfo) {
-      this.sObjectInfo = sObjectInfo;
     }
 
     public String getRecordTypeId() {
       return recordTypeId;
     }
 
-    public void setRecordTypeId(String recordTypeId) {
-      this.recordTypeId = recordTypeId;
-    }
-
     public String getTitle() {
       return title;
-    }
-
-    public void setTitle(String title) {
-      this.title = title;
     }
 
     public RecordData getData() {
       return data;
     }
-
-    public void setData(RecordData data) {
-      this.data = data;
-    }
-
-    @Override
-    public String toString() {
-      return "SearchResult{" +
-          "id='" + id + '\'' +
-          ", sObjectInfo=" + sObjectInfo +
-          ", recordTypeId='" + recordTypeId + '\'' +
-          ", title='" + title + '\'' +
-          ", data=" + data +
-          '}';
-    }
   }
+
   @JsonIgnoreProperties(ignoreUnknown = true)
   public static class SObjectInfo implements Serializable {
 
@@ -171,24 +99,8 @@ public class Collect implements Serializable {
       return apiName;
     }
 
-    public void setApiName(String apiName) {
-      this.apiName = apiName;
-    }
-
     public String getLabel() {
       return label;
-    }
-
-    public void setLabel(String label) {
-      this.label = label;
-    }
-
-    @Override
-    public String toString() {
-      return "SObjectInfo{" +
-          "apiName='" + apiName + '\'' +
-          ", label='" + label + '\'' +
-          '}';
     }
   }
 
@@ -206,24 +118,12 @@ public class Collect implements Serializable {
       return Type;
     }
 
-    public void setType(RecordField type) {
-      Type = type;
-    }
-
     public RecordField getId() {
       return Id;
     }
 
-    public void setId(RecordField id) {
-      Id = id;
-    }
-
     public RecordField getName() {
       return Name;
-    }
-
-    public void setName(RecordField name) {
-      Name = name;
     }
 
     @Override
@@ -242,15 +142,6 @@ public class Collect implements Serializable {
     public int hashCode() {
       return Objects.hash(getType(), getId(), getName());
     }
-
-    @Override
-    public String toString() {
-      return "RecordData{" +
-          "Type=" + Type +
-          ", Id=" + Id +
-          ", Name=" + Name +
-          '}';
-    }
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
@@ -265,16 +156,8 @@ public class Collect implements Serializable {
       return displayValue;
     }
 
-    public void setDisplayValue(String displayValue) {
-      this.displayValue = displayValue;
-    }
-
     public String getValue() {
       return value;
-    }
-
-    public void setValue(String value) {
-      this.value = value;
     }
 
     @Override
@@ -291,14 +174,6 @@ public class Collect implements Serializable {
     @Override
     public int hashCode() {
       return Objects.hash(getDisplayValue(), getValue());
-    }
-
-    @Override
-    public String toString() {
-      return "RecordField{" +
-          "displayValue='" + displayValue + '\'' +
-          ", value='" + value + '\'' +
-          '}';
     }
   }
 }
