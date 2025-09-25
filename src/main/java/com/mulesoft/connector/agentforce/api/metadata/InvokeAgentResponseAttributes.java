@@ -1,6 +1,7 @@
 package com.mulesoft.connector.agentforce.api.metadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -37,9 +38,11 @@ public class InvokeAgentResponseAttributes implements Serializable {
     private String id;
     private String feedbackId;
     private String planId;
+    @JsonProperty("isContentSafe")
     private boolean isContentSafe;
     private String message;
     private String reason;
+    private List<Collect> collect;
 
     public String getType() {
       return type;
@@ -67,6 +70,10 @@ public class InvokeAgentResponseAttributes implements Serializable {
 
     public String getReason() {
       return reason;
+    }
+
+    public List<Collect> getCollect() {
+      return collect;
     }
   }
 }
