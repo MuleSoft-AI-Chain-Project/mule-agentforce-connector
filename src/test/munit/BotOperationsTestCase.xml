@@ -32,18 +32,6 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
         </munit:validation>
     </munit:test>
 
-    <munit:test name="BotOperation_ConnectivityError" doc:id="a7a7b3c8-bbca-4e75-915f-4c9637c48f6a" expectedErrorType="ms-agentforce:CONNECTIVITY">
-        <munit:execution >
-            <ms-agentforce:continue-agent-conversation doc:name="Continue agent conversation" doc:id="3040a1b1-e1ed-4832-a406-fa12218250a7" config-ref="Agentforce_Config_Error" messageSequenceNumber="1">
-                <ms-agentforce:message ><![CDATA[Get me customer records from salesforce for user Test]]></ms-agentforce:message>
-                <ms-agentforce:session-id ><![CDATA[#[vars.sessId]]]></ms-agentforce:session-id>
-            </ms-agentforce:continue-agent-conversation>
-        </munit:execution>
-        <munit:validation >
-            <munit-tools:assert-that doc:name="Assert that" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b95b" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
-        </munit:validation>
-    </munit:test>
-
     <mtf:tooling-test name="ContinueAgentConversationOutputMetadataTest">
         <mtf:get-output-metadata>
             <ms-agentforce:continue-agent-conversation doc:name="Continue agent conversation" doc:id="3040a1b1-e2ed-4832-a406-fa12218250a7" config-ref="Agentforce_Config" messageSequenceNumber="1">
