@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/mtf  http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+
+    <munit:config name="InvalidTestCases.xml"/>
+
+    <munit:test name="EndBotOperation_ConnectivityError" doc:id="a7a7b3c8-bbca-4e75-915f-4c9637c48z7a" expectedErrorType="ms-agentforce:AGENT_OPERATIONS_FAILURE">
+        <munit:execution>
+            <logger level="INFO" doc:name="Logger" message="Executing EndBotOperation_ConnectivityError"/>
+            <ms-agentforce:end-agent-conversation doc:name="End agent conversation" doc:id="003b5bf5-6baa-4540-9529-148e50e356ec" config-ref="Agentforce_Config">
+                <ms-agentforce:session-id>"Invalid_SessionId"</ms-agentforce:session-id>
+            </ms-agentforce:end-agent-conversation>
+        </munit:execution>
+    </munit:test>
+
+    <munit:test name="BotOperation_InvalidSessionId" doc:id="a7a7b3c8-bbca-4e75-915f-4c9637c48f6a" expectedErrorType="ms-agentforce:AGENT_OPERATIONS_FAILURE">
+        <munit:execution>
+            <logger level="INFO" doc:name="Logger" message="Executing BotOperation_InvalidSessionId"/>
+            <ms-agentforce:continue-agent-conversation doc:name="Continue agent conversation" doc:id="3040a1b1-e1ed-4832-a406-fa12218250a7" config-ref="Agentforce_Config" messageSequenceNumber="1">
+                <ms-agentforce:message ><![CDATA[Get me customer records from salesforce for user Test]]></ms-agentforce:message>
+                <ms-agentforce:session-id>"Invalid_SessionId"</ms-agentforce:session-id>
+            </ms-agentforce:continue-agent-conversation>
+        </munit:execution>
+        <munit:validation >
+            <munit-tools:assert-that doc:name="Assert that" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b95b" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="StartBotOperation_OperationError" doc:id="a7a7b3c8-bbca-4e75-915f-5c9637c48f7a" expectedErrorType="ms-agentforce:AGENT_OPERATIONS_FAILURE">
+        <munit:execution>
+            <logger level="INFO" doc:name="Logger" message="Executing StartBotOperation_OperationError"/>
+            <ms-agentforce:start-agent-conversation doc:name="Start agent with wrong credentials" config-ref="Agentforce_Config" agent='"INVALID_AGENT"'/>
+        </munit:execution>
+    </munit:test>
+
+</mule>
