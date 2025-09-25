@@ -191,6 +191,9 @@ public class BotRequestHelper {
 
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("sessionId", responseDTO.getSessionId());
+    log.info("Inside BotRequestHelper.parseResponseForStartSession. Response JSON: {}", jsonObject);
+    log.info("Inside BotRequestHelper.parseResponseForStartSession. sessionId: {}", responseDTO.getSessionId());
+
     return Result.<InputStream, InvokeAgentResponseAttributes>builder()
         .output(toInputStream(jsonObject.toString(), StandardCharsets.UTF_8))
         .attributes(responseDTO.getResponseAttributes())
