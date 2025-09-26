@@ -75,5 +75,27 @@ public class InvokeAgentResponseAttributes implements Serializable {
     public List<Collect> getCollect() {
       return collect;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (!(o instanceof Message))
+        return false;
+      Message message1 = (Message) o;
+      return isContentSafe == message1.isContentSafe &&
+          Objects.equals(type, message1.type) &&
+          Objects.equals(id, message1.id) &&
+          Objects.equals(feedbackId, message1.feedbackId) &&
+          Objects.equals(planId, message1.planId) &&
+          Objects.equals(message, message1.message) &&
+          Objects.equals(reason, message1.reason) &&
+          Objects.equals(collect, message1.collect);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(type, id, feedbackId, planId, isContentSafe, message, reason, collect);
+    }
   }
 }

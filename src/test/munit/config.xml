@@ -13,7 +13,7 @@
     <configuration-properties doc:name="Configuration properties" file="automation-credentials.properties"/>
     
     <ms-agentforce:config name="Agentforce_Config" doc:name="Agentforce Config" doc:id="e2310b9c-aa50-406c-85ae-8bfa200c009a" >
-        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS" maxConnections="2">
+        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS" maxConnections="10">
             <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
         </ms-agentforce:oauth-client-credentials-connection>
     </ms-agentforce:config>
@@ -23,8 +23,7 @@
             <ms-agentforce:oauth-client-credentials clientId="testId" clientSecret="testSecret" tokenUrl="${config.salesforce-org}" />
         </ms-agentforce:oauth-client-credentials-connection>
     </ms-agentforce:config>
-<!--
-Commenting this code as cam tool does not support this proxy. Need some other public proxy server
+
     <ms-agentforce:config name="Agentforce_Config_With_Proxy" doc:name="Agentforce Config With Proxy" doc:id="69efc92c-a8c4-4a80-ac37-1d6e5f51719c" readTimeout="10" readTimeoutUnit="SECONDS">
         <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
             <ms-agentforce:proxy-config >
@@ -33,7 +32,7 @@ Commenting this code as cam tool does not support this proxy. Need some other pu
             <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
         </ms-agentforce:oauth-client-credentials-connection>
     </ms-agentforce:config>
--->
+
     <ms-agentforce:config name="Agentforce_Configuration_TLS" doc:name="Agentforce Configuration" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1d" >
         <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
             <tls:context >

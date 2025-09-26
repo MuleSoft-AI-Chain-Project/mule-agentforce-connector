@@ -12,8 +12,7 @@
         http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
 
     <munit:config name="AgentOperationWithProxy.xml"/>
-<!--
-    Commenting this code as cam tool does not support this proxy. Need some other public proxy server
+
     <munit:test name="StartAgentTest">
         <munit:execution>
             <logger level="INFO" doc:name="Logger" doc:id="301239c9-3db7-4896-84e8-3febe24636c5" message="Calling StartAgentTest"/>
@@ -28,9 +27,8 @@
     <munit:after-test name="new-test-suiteAfter_Test" doc:id="fa1c061a-85f3-480f-96bb-9cc305aa49c3" >
         <ms-agentforce:end-agent-conversation doc:name="End agent conversation" doc:id="46c41ed7-88f7-49ea-8025-89a21c1524cf" config-ref="Agentforce_Config_With_Proxy">
             <ms-agentforce:session-id ><![CDATA[#[output application/json
-
+---
 payload.sessionId]]]></ms-agentforce:session-id>
         </ms-agentforce:end-agent-conversation>
     </munit:after-test>
-    -->
 </mule>
