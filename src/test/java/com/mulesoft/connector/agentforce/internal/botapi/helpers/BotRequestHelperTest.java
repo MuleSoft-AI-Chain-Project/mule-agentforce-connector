@@ -116,6 +116,16 @@ class BotRequestHelperTest {
         "      \"isContentSafe\": true,\n" +
         "      \"message\": \"恵比寿株式会社に関連する商談が見つかりました。どれを選択しますか？\",\n"
         +
+        "      \"result\": [\n" +
+        "         {\n" +
+        "           \"type\": \"copilotActionOutput/Triage_Referral\",\n" +
+        "           \"value\": {\n" +
+        "             \"promptResponse\": \"{\\n \\\"triageRecord\\\": {\\n  \\\"category\\\": \\\"Cardiology\\\",\\n  \\\"problem\\\": \\\"Chest Pain\\\",\\n  \\\"symptoms\\\": \\\"Recent onset chest pain with high probability of IHD\\\",\\n  \\\"priority\\\": \\\"P1 Chest pain clinic\\\"\\n },\\n \\\"confidenceRating\\\": \\\"high\\\"\\n}\"\n"
+        +
+        "           },\n" +
+        "           \"property\": \"\"\n" +
+        "         }\n" +
+        "      ]," +
         "      \"collect\": [\n" +
         "        {\n" +
         "          \"targetType\": \"lightning__recordInfoType\",\n" +
@@ -260,5 +270,11 @@ class BotRequestHelperTest {
     assertEquals("006IT00000oXIMOYA4", secondResult.getData().getId().getValue(), "ID value should match");
     assertEquals("恵比寿株式会社 タブレット導入 200台", secondResult.getData().getName().getValue(),
                  "Name value should match");
+
+    // Verify result present in message
+    assertNotNull(message.getResult());
+    assertEquals(1, message.getResult().size());
+    assertEquals("copilotActionOutput/Triage_Referral", message.getResult().get(0).getType());
+    assertNotNull(message.getResult().get(0).getValue());
   }
 }

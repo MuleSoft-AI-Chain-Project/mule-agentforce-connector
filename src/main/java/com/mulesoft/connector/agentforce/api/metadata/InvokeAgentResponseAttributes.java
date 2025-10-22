@@ -43,6 +43,7 @@ public class InvokeAgentResponseAttributes implements Serializable {
     private String message;
     private String reason;
     private List<Collect> collect;
+    private List<Result> result;
 
     public String getType() {
       return type;
@@ -76,6 +77,10 @@ public class InvokeAgentResponseAttributes implements Serializable {
       return collect;
     }
 
+    public List<Result> getResult() {
+      return result;
+    }
+
     @Override
     public boolean equals(Object o) {
       if (this == o)
@@ -90,12 +95,13 @@ public class InvokeAgentResponseAttributes implements Serializable {
           Objects.equals(planId, message1.planId) &&
           Objects.equals(message, message1.message) &&
           Objects.equals(reason, message1.reason) &&
-          Objects.equals(collect, message1.collect);
+          Objects.equals(collect, message1.collect) &&
+          Objects.equals(result, message1.getResult());
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(type, id, feedbackId, planId, isContentSafe, message, reason, collect);
+      return Objects.hash(type, id, feedbackId, planId, isContentSafe, message, reason, collect, result);
     }
   }
 }
