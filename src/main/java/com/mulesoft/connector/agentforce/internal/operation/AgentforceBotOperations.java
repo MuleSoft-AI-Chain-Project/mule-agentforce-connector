@@ -1,5 +1,6 @@
 package com.mulesoft.connector.agentforce.internal.operation;
 
+import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
 import com.mulesoft.connector.agentforce.internal.error.provider.BotErrorTypeProvider;
 import com.mulesoft.connector.agentforce.internal.botapi.group.BotAgentParameterGroup;
@@ -54,10 +55,12 @@ public class AgentforceBotOperations {
     }
   }
 
+  @Deprecated
   @MediaType(value = TEXT_PLAIN, strict = false)
   @Alias("Continue-agent-conversation")
   @Throws(BotErrorTypeProvider.class)
   @OutputResolver(output = AgentConversationResponseMetadataResolver.class)
+  @Summary("DEPRECATED: Use Send-message-sync for structured JSON response. Continue an agent conversation (returns plain text)")
   public void continueConversation(@Connection AgentforceConnection connection,
                                    @Content(primary = true) InputStream message,
                                    @Content String sessionId,
@@ -66,12 +69,35 @@ public class AgentforceBotOperations {
                                        name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                                    CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
-    log.info("Executing continue agent conversation operation, sessionId = {}", sessionId);
+    log.info("Executing continue agent conversation operation (DEPRECATED), sessionId = {}", sessionId);
 
     try {
       connection.getBotRequestHelper().continueSession(message, sessionId, messageSequenceNumber, readTimeout, callback);
     } catch (Exception e) {
       callback.error(new ModuleException("Error in continue agent conversation for session id: " + sessionId,
+                                         AGENT_OPERATIONS_FAILURE, e));
+    }
+  }
+
+  @MediaType(value = APPLICATION_JSON, strict = false)
+  @Alias("Send-message-sync")
+  @Throws(BotErrorTypeProvider.class)
+  @Summary("Send a message to the agent and receive structured JSON response with clean payload/attributes separation")
+  @DisplayName("Send Message (Sync)")
+  public void sendMessageSync(@Connection AgentforceConnection connection,
+                              @Content(primary = true) InputStream message,
+                              @Content String sessionId,
+                              @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
+                              @ParameterGroup(
+                                  name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
+                              CompletionCallback<InputStream, AgentResponseMetadata> callback) {
+
+    log.info("Executing send message sync operation, sessionId = {}", sessionId);
+
+    try {
+      connection.getBotRequestHelper().sendMessageSync(message, sessionId, messageSequenceNumber, readTimeout, callback);
+    } catch (Exception e) {
+      callback.error(new ModuleException("Error in send message sync for session id: " + sessionId,
                                          AGENT_OPERATIONS_FAILURE, e));
     }
   }
