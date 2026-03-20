@@ -1,7 +1,7 @@
 package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 
 import com.mulesoft.connector.agentforce.api.metadata.AgentBusinessDataResponseDTO;
-import com.mulesoft.connector.agentforce.internal.botapi.dto.CompleteAgentApiResponse;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentApiResponseDTO;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -76,13 +76,13 @@ public enum MessageTypeHandler {
   END_OF_TURN("EndOfTurn", null);
 
   private final String typeName;
-  private final BiConsumer<CompleteAgentApiResponse.FullMessage, AgentBusinessDataResponseDTO.BusinessDataMessage> handler;
+  private final BiConsumer<AgentApiResponseDTO.Message, AgentBusinessDataResponseDTO.BusinessDataMessage> handler;
 
   private static final Map<String, MessageTypeHandler> TYPE_MAP = Arrays.stream(values())
       .collect(Collectors.toMap(MessageTypeHandler::getTypeName, h -> h));
 
   MessageTypeHandler(String typeName,
-                     BiConsumer<CompleteAgentApiResponse.FullMessage, AgentBusinessDataResponseDTO.BusinessDataMessage> handler) {
+                     BiConsumer<AgentApiResponseDTO.Message, AgentBusinessDataResponseDTO.BusinessDataMessage> handler) {
     this.typeName = typeName;
     this.handler = handler;
   }
@@ -95,7 +95,7 @@ public enum MessageTypeHandler {
     return TYPE_MAP.get(typeName);
   }
 
-  public void apply(CompleteAgentApiResponse.FullMessage source,
+  public void apply(AgentApiResponseDTO.Message source,
                     AgentBusinessDataResponseDTO.BusinessDataMessage target) {
     if (handler != null) {
       handler.accept(source, target);

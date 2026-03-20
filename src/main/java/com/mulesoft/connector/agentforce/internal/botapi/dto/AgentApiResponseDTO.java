@@ -12,14 +12,14 @@ import java.util.Map;
  * Internal class for deserializing complete API responses from Agentforce API
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CompleteAgentApiResponse implements Serializable {
+public class AgentApiResponseDTO implements Serializable {
 
-  private List<FullMessage> messages;
+  private List<Message> messages;
 
   @JsonProperty("_links")
   private Links links;
 
-  public List<FullMessage> getMessages() {
+  public List<Message> getMessages() {
     return messages;
   }
 
@@ -28,7 +28,7 @@ public class CompleteAgentApiResponse implements Serializable {
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
-  public static class FullMessage implements Serializable {
+  public static class Message implements Serializable {
 
     // Core metadata fields
     private String type;

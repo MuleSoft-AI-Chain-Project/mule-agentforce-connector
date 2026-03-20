@@ -10,7 +10,7 @@ import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentMetadataRespon
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotContinueSessionRequestDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotRecord;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotSessionRequestDTO;
-import com.mulesoft.connector.agentforce.internal.botapi.dto.CompleteAgentApiResponse;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentApiResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.InstanceConfigDTO;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
@@ -396,14 +396,14 @@ public class BotRequestHelper {
 
   private Result<InputStream, AgentResponseMetadata> parseResponseForSendMessageSync(InputStream responseStream) {
     try {
-      CompleteAgentApiResponse fullResponse =
-          objectMapper.readValue(responseStream, CompleteAgentApiResponse.class);
+      AgentApiResponseDTO apiResponse =
+          objectMapper.readValue(responseStream, AgentApiResponseDTO.class);
 
       // Build payload with business data
-      String jsonPayload = buildBusinessDataPayload(fullResponse);
+      String jsonPayload = buildBusinessDataPayload(apiResponse);
 
       // Build metadata (no business data)
-      AgentResponseMetadata metadata = buildMetadata(fullResponse);
+      AgentResponseMetadata metadata = buildMetadata(apiResponse);
 
       return Result.<InputStream, AgentResponseMetadata>builder()
           .output(toInputStream(jsonPayload, StandardCharsets.UTF_8))
@@ -417,9 +417,9 @@ public class BotRequestHelper {
     }
   }
 
-  private String buildBusinessDataPayload(CompleteAgentApiResponse fullResponse) {
+  private String buildBusinessDataPayload(AgentApiResponseDTO apiResponse) {
     try {
-      List<AgentBusinessDataResponseDTO.BusinessDataMessage> messages = fullResponse.getMessages().stream()
+      List<AgentBusinessDataResponseDTO.BusinessDataMessage> messages = apiResponse.getMessages().stream()
           .map(this::convertToBusinessDataMessage)
           .collect(Collectors.toList());
 
@@ -432,7 +432,7 @@ public class BotRequestHelper {
   }
 
   private AgentBusinessDataResponseDTO.BusinessDataMessage convertToBusinessDataMessage(
-                                                                                        CompleteAgentApiResponse.FullMessage msg) {
+                                                                                        AgentApiResponseDTO.Message msg) {
     AgentBusinessDataResponseDTO.BusinessDataMessage businessMsg =
         new AgentBusinessDataResponseDTO.BusinessDataMessage(msg.getType());
 
@@ -448,14 +448,14 @@ public class BotRequestHelper {
     return businessMsg;
   }
 
-  private AgentResponseMetadata buildMetadata(CompleteAgentApiResponse fullResponse) {
+  private AgentResponseMetadata buildMetadata(AgentApiResponseDTO apiResponse) {
     AgentResponseMetadata metadata = new AgentResponseMetadata();
 
-    if (fullResponse.getLinks() != null) {
-      metadata.setLinks(convertLinks(fullResponse.getLinks()));
+    if (apiResponse.getLinks() != null) {
+      metadata.setLinks(convertLinks(apiResponse.getLinks()));
     }
 
-    List<AgentResponseMetadata.MessageMetadata> msgMetadataList = fullResponse.getMessages().stream()
+    List<AgentResponseMetadata.MessageMetadata> msgMetadataList = apiResponse.getMessages().stream()
         .map(this::convertToMessageMetadata)
         .collect(Collectors.toList());
 
@@ -463,7 +463,7 @@ public class BotRequestHelper {
     return metadata;
   }
 
-  private AgentResponseMetadata.MessageMetadata convertToMessageMetadata(CompleteAgentApiResponse.FullMessage msg) {
+  private AgentResponseMetadata.MessageMetadata convertToMessageMetadata(AgentApiResponseDTO.Message msg) {
     AgentResponseMetadata.MessageMetadata msgMeta = new AgentResponseMetadata.MessageMetadata();
 
     msgMeta.setId(msg.getId());
@@ -491,7 +491,7 @@ public class BotRequestHelper {
     return msgMeta;
   }
 
-  private AgentResponseMetadata.Links convertLinks(CompleteAgentApiResponse.Links source) {
+  private AgentResponseMetadata.Links convertLinks(AgentApiResponseDTO.Links source) {
     AgentResponseMetadata.Links links = new AgentResponseMetadata.Links();
 
     if (source.getSelf() != null) {
