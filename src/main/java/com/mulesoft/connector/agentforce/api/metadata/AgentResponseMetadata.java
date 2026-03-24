@@ -170,7 +170,6 @@ public class AgentResponseMetadata implements Serializable {
 
     private Link self;
     private Link messages;
-    private Link messagesStream;
     private Link session;
     private Link end;
 
@@ -188,14 +187,6 @@ public class AgentResponseMetadata implements Serializable {
 
     public void setMessages(Link messages) {
       this.messages = messages;
-    }
-
-    public Link getMessagesStream() {
-      return messagesStream;
-    }
-
-    public void setMessagesStream(Link messagesStream) {
-      this.messagesStream = messagesStream;
     }
 
     public Link getSession() {
@@ -223,14 +214,13 @@ public class AgentResponseMetadata implements Serializable {
       Links links = (Links) o;
       return Objects.equals(getSelf(), links.getSelf()) &&
           Objects.equals(getMessages(), links.getMessages()) &&
-          Objects.equals(getMessagesStream(), links.getMessagesStream()) &&
           Objects.equals(getSession(), links.getSession()) &&
           Objects.equals(getEnd(), links.getEnd());
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(getSelf(), getMessages(), getMessagesStream(), getSession(), getEnd());
+      return Objects.hash(getSelf(), getMessages(), getSession(), getEnd());
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
