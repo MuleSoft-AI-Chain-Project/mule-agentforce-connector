@@ -395,19 +395,19 @@ public class BotRequestHelper {
         .build();
   }
 
-  private Result<InputStream, AgentResponseMetadata> parseResponseForSendMessageSync(InputStream responseStream) {
+  Result<InputStream, AgentResponseMetadata> parseResponseForSendMessageSync(InputStream responseStream) {
     try {
       AgentApiResponseDTO apiResponse =
           objectMapper.readValue(responseStream, AgentApiResponseDTO.class);
 
       // Build payload with business data
-      String jsonPayload = buildBusinessDataPayload(apiResponse);
+      AgentBusinessDataResponseDTO businessData = buildBusinessDataPayload(apiResponse);
 
       // Build metadata (no business data)
       AgentResponseMetadata metadata = buildMetadata(apiResponse);
 
       return Result.<InputStream, AgentResponseMetadata>builder()
-          .output(toInputStream(jsonPayload, StandardCharsets.UTF_8))
+          .output(toInputStream(objectMapper.writeValueAsString(businessData), StandardCharsets.UTF_8))
           .attributes(metadata)
           .attributesMediaType(MediaType.APPLICATION_JAVA)
           .mediaType(MediaType.APPLICATION_JSON)
@@ -418,17 +418,11 @@ public class BotRequestHelper {
     }
   }
 
-  private String buildBusinessDataPayload(AgentApiResponseDTO apiResponse) {
-    try {
-      List<AgentBusinessDataResponseDTO.BusinessDataMessage> messages = apiResponse.getMessages().stream()
-          .map(this::convertToBusinessDataMessage)
-          .collect(Collectors.toList());
-
-      return objectMapper.writeValueAsString(new AgentBusinessDataResponseDTO(messages));
-
-    } catch (JsonProcessingException e) {
-      throw new ModuleException("Error building business data payload", AGENT_OPERATIONS_FAILURE, e);
-    }
+  AgentBusinessDataResponseDTO buildBusinessDataPayload(AgentApiResponseDTO apiResponse) {
+    return new AgentBusinessDataResponseDTO(
+                                            apiResponse.getMessages().stream()
+                                                .map(this::convertToBusinessDataMessage)
+                                                .collect(Collectors.toList()));
   }
 
   private AgentBusinessDataResponseDTO.BusinessDataMessage convertToBusinessDataMessage(
@@ -448,7 +442,7 @@ public class BotRequestHelper {
     return businessMsg;
   }
 
-  private AgentResponseMetadata buildMetadata(AgentApiResponseDTO apiResponse) {
+  AgentResponseMetadata buildMetadata(AgentApiResponseDTO apiResponse) {
     AgentResponseMetadata metadata = new AgentResponseMetadata();
 
     if (apiResponse.getLinks() != null) {

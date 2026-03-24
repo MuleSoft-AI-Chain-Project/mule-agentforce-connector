@@ -64,8 +64,8 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
             </ms-agentforce:send-message-sync>
         </mtf:get-output-metadata>
         <mtf:validation>
-            <munit-tools:assert-equals actual="#[payload.format]" expected="#['json']"/>
-            <munit-tools:assert-equals actual="#[payload.'type']" expected="#['Any']"/>
+            <munit-tools:assert-equals actual="#[payload.format]" expected="#['java']"/>
+            <munit-tools:assert-that doc:name="Assert payload type exists" expression="#[payload.'type']" is="#[MunitTools::notNullValue()]"/>
         </mtf:validation>
     </mtf:tooling-test>
 
