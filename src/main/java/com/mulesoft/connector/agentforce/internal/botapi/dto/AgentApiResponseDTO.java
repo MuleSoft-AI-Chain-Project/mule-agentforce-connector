@@ -63,17 +63,8 @@ public class AgentApiResponseDTO implements Serializable {
     // ProgressIndicator fields
     private String indicatorType;
 
-    // Chunk fields
-    private Integer offset;
-    private Object value;
-    private String lightningType;
-
     // Escalate fields
     private List<Map<String, Object>> targets;
-
-    // EscalateToConversationMessage fields
-    private String conversationId;
-    private String accessToken;
 
     // Error fields
     private Integer httpStatus;
@@ -81,7 +72,6 @@ public class AgentApiResponseDTO implements Serializable {
     private Long timestamp;
     private Boolean expected;
     private String traceId;
-    private String botMode;
 
     // Getters only (no setters - Jackson deserializes via fields)
 
@@ -145,28 +135,8 @@ public class AgentApiResponseDTO implements Serializable {
       return indicatorType;
     }
 
-    public Integer getOffset() {
-      return offset;
-    }
-
-    public Object getValue() {
-      return value;
-    }
-
-    public String getLightningType() {
-      return lightningType;
-    }
-
     public List<Map<String, Object>> getTargets() {
       return targets;
-    }
-
-    public String getConversationId() {
-      return conversationId;
-    }
-
-    public String getAccessToken() {
-      return accessToken;
     }
 
     public Integer getHttpStatus() {
@@ -187,10 +157,6 @@ public class AgentApiResponseDTO implements Serializable {
 
     public String getTraceId() {
       return traceId;
-    }
-
-    public String getBotMode() {
-      return botMode;
     }
   }
 

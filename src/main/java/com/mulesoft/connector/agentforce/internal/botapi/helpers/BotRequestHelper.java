@@ -1,5 +1,6 @@
 package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
@@ -256,7 +257,7 @@ public class BotRequestHelper {
                                                                  rootNode, InvokeAgentResponseAttributes.class));
       responseDTO.setSessionId(getTextValue(rootNode, SESSION_ID));
       responseDTO.setText(getMessageText(rootNode));
-    } catch (Exception e) {
+    } catch (IOException e) {
       throw new ModuleException("Error in parsing response ", AGENT_OPERATIONS_FAILURE, e);
     }
     return responseDTO;
@@ -412,7 +413,7 @@ public class BotRequestHelper {
           .mediaType(MediaType.APPLICATION_JSON)
           .build();
 
-    } catch (Exception e) {
+    } catch (IOException e) {
       throw new ModuleException("Error parsing send message sync response", AGENT_OPERATIONS_FAILURE, e);
     }
   }
@@ -423,10 +424,9 @@ public class BotRequestHelper {
           .map(this::convertToBusinessDataMessage)
           .collect(Collectors.toList());
 
-      AgentBusinessDataResponseDTO response = new AgentBusinessDataResponseDTO(messages);
-      return objectMapper.writeValueAsString(response);
+      return objectMapper.writeValueAsString(new AgentBusinessDataResponseDTO(messages));
 
-    } catch (Exception e) {
+    } catch (JsonProcessingException e) {
       throw new ModuleException("Error building business data payload", AGENT_OPERATIONS_FAILURE, e);
     }
   }
@@ -473,20 +473,11 @@ public class BotRequestHelper {
     msgMeta.setIsContentSafe(msg.getIsContentSafe());
     msgMeta.setMetrics(msg.getMetrics());
 
-    // Streaming metadata
-    msgMeta.setOffset(msg.getOffset());
-    msgMeta.setLightningType(msg.getLightningType());
-
     // Error metadata
     msgMeta.setHttpStatus(msg.getHttpStatus());
     msgMeta.setTimestamp(msg.getTimestamp());
     msgMeta.setExpected(msg.getExpected());
     msgMeta.setTraceId(msg.getTraceId());
-    msgMeta.setBotMode(msg.getBotMode());
-
-    // Session management metadata
-    msgMeta.setConversationId(msg.getConversationId());
-    msgMeta.setAccessToken(msg.getAccessToken());
 
     return msgMeta;
   }
@@ -504,12 +495,6 @@ public class BotRequestHelper {
       AgentResponseMetadata.Links.Link messages = new AgentResponseMetadata.Links.Link();
       messages.setHref(source.getMessages().getHref());
       links.setMessages(messages);
-    }
-
-    if (source.getMessagesStream() != null) {
-      AgentResponseMetadata.Links.Link messagesStream = new AgentResponseMetadata.Links.Link();
-      messagesStream.setHref(source.getMessagesStream().getHref());
-      links.setMessagesStream(messagesStream);
     }
 
     if (source.getSession() != null) {

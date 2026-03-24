@@ -36,23 +36,6 @@ public enum MessageTypeHandler {
     target.setReason(source.getReason());
   }),
 
-  // Chunk types for streaming
-  TEXT_CHUNK("TextChunk", (source, target) -> {
-    target.setMessage(source.getMessage());
-  }),
-
-  VALIDATION_FAILURE_CHUNK("ValidationFailureChunk", (source, target) -> {
-    target.setReason(source.getReason());
-  }),
-
-  LIGHTNING_CHUNK("LightningChunk", (source, target) -> {
-    target.setValue(source.getValue());
-  }),
-
-  THOUGHT_TEXT_CHUNK("ThoughtTextChunk", (source, target) -> {
-    target.setMessage(source.getMessage());
-  }),
-
   // Escalation types
   ESCALATE("Escalate", (source, target) -> {
     target.setTargets(source.getTargets());
@@ -68,12 +51,7 @@ public enum MessageTypeHandler {
   PROGRESS_INDICATOR("ProgressIndicator", (source, target) -> {
     target.setIndicatorType(source.getIndicatorType());
     target.setMessage(source.getMessage());
-  }),
-
-  ESCALATE_TO_CONVERSATION("EscalateToConversationMessage", null),
-
-  // Empty type
-  END_OF_TURN("EndOfTurn", null);
+  });
 
   private final String typeName;
   private final BiConsumer<AgentApiResponseDTO.Message, AgentBusinessDataResponseDTO.BusinessDataMessage> handler;

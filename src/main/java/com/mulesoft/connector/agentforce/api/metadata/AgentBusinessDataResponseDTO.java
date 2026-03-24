@@ -48,9 +48,6 @@ public class AgentBusinessDataResponseDTO {
     // ProgressIndicator fields
     private String indicatorType;
 
-    // Chunk fields (TextChunk, ValidationFailureChunk, LightningChunk, ThoughtTextChunk)
-    private Object value;
-
     // Escalate fields
     private List<Map<String, Object>> targets;
 
@@ -139,14 +136,6 @@ public class AgentBusinessDataResponseDTO {
 
     public void setIndicatorType(String indicatorType) {
       this.indicatorType = indicatorType;
-    }
-
-    public Object getValue() {
-      return value;
-    }
-
-    public void setValue(Object value) {
-      this.value = value;
     }
 
     public List<Map<String, Object>> getTargets() {

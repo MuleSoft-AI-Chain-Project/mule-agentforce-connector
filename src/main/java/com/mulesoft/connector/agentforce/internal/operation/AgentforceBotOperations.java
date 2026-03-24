@@ -6,6 +6,7 @@ import com.mulesoft.connector.agentforce.internal.error.provider.BotErrorTypePro
 import com.mulesoft.connector.agentforce.internal.botapi.group.BotAgentParameterGroup;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.metadata.AgentConversationResponseMetadataResolver;
+import com.mulesoft.connector.agentforce.internal.metadata.SendMessageSyncResponseMetadataResolver;
 import com.mulesoft.connector.agentforce.internal.params.ReadTimeoutParams;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -82,6 +83,8 @@ public class AgentforceBotOperations {
   @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("Send-message-sync")
   @Throws(BotErrorTypeProvider.class)
+  @OutputResolver(output = SendMessageSyncResponseMetadataResolver.class,
+      attributes = SendMessageSyncResponseMetadataResolver.class)
   @Summary("Send a message to the agent and receive structured JSON response with clean payload/attributes separation")
   @DisplayName("Send Message (Sync)")
   public void sendMessageSync(@Connection AgentforceConnection connection,

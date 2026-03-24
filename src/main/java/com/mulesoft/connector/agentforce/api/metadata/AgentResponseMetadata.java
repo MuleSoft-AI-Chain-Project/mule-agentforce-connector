@@ -58,20 +58,11 @@ public class AgentResponseMetadata implements Serializable {
     private Boolean isContentSafe;
     private Map<String, Object> metrics;
 
-    // Streaming metadata
-    private Integer offset;
-    private String lightningType;
-
     // Error metadata
     private Integer httpStatus;
     private Long timestamp;
     private Boolean expected;
     private String traceId;
-    private String botMode;
-
-    // Session management metadata
-    private String conversationId;
-    private String accessToken;
 
     public String getId() {
       return id;
@@ -121,22 +112,6 @@ public class AgentResponseMetadata implements Serializable {
       this.metrics = metrics;
     }
 
-    public Integer getOffset() {
-      return offset;
-    }
-
-    public void setOffset(Integer offset) {
-      this.offset = offset;
-    }
-
-    public String getLightningType() {
-      return lightningType;
-    }
-
-    public void setLightningType(String lightningType) {
-      this.lightningType = lightningType;
-    }
-
     public Integer getHttpStatus() {
       return httpStatus;
     }
@@ -167,30 +142,6 @@ public class AgentResponseMetadata implements Serializable {
 
     public void setTraceId(String traceId) {
       this.traceId = traceId;
-    }
-
-    public String getBotMode() {
-      return botMode;
-    }
-
-    public void setBotMode(String botMode) {
-      this.botMode = botMode;
-    }
-
-    public String getConversationId() {
-      return conversationId;
-    }
-
-    public void setConversationId(String conversationId) {
-      this.conversationId = conversationId;
-    }
-
-    public String getAccessToken() {
-      return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-      this.accessToken = accessToken;
     }
 
     @Override
