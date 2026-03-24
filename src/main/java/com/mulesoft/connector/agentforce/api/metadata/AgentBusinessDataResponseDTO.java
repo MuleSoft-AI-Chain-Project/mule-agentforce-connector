@@ -18,10 +18,6 @@ public class AgentBusinessDataResponseDTO {
     return messages;
   }
 
-  public void setMessages(List<BusinessDataMessage> messages) {
-    this.messages = messages;
-  }
-
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public static class BusinessDataMessage {
 
@@ -60,10 +56,6 @@ public class AgentBusinessDataResponseDTO {
 
     public String getType() {
       return type;
-    }
-
-    public void setType(String type) {
-      this.type = type;
     }
 
     public String getMessage() {
