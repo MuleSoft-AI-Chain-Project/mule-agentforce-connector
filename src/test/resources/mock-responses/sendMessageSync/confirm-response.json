@@ -2,19 +2,23 @@
   "messages": [
     {
       "type": "Confirm",
-      "feedbackId": "a1b2c3d4-5678-90ab-cdef-123456789abc",
-      "isContentSafe": true,
-      "message": "Are you sure you want to enroll in the Power Bank Tariff promotion? This will update your account settings.",
-      "id": "b2c3d4e5-6789-01bc-def0-234567890bcd",
-      "metrics": {},
-      "planId": "a1b2c3d4-5678-90ab-cdef-123456789abc",
+      "feedbackId": "041a561f-bef6-4af6-9bea-308cfa647a99",
       "confirm": [
         {
-          "action": "enrollInPromotion",
-          "promotionId": "0c8J9000000kKnSIAU",
-          "promotionName": "Power Bank Tariff"
+          "type": "copilotActionInput/CreateUpdatePromotionUsingAccrualTemplate_179J9000000wm0N",
+          "value": {
+            "promotionName": "Energy Efficiency Rewards Programme",
+            "startDate": "2026-01-14",
+            "loyaltyProgram": "Energy Efficiency Rewards"
+          },
+          "property": ""
         }
-      ]
+      ],
+      "id": "18b99269-4bb2-4f62-a5de-90a76aab0288",
+      "metrics": {},
+      "planId": "041a561f-bef6-4af6-9bea-308cfa647a99",
+      "isContentSafe": true,
+      "message": "Can I proceed with creating a promotion for the Energy Efficiency Rewards Programme starting on January 14, 2026?"
     }
   ],
   "_links": {

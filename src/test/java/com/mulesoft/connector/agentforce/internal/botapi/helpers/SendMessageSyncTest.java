@@ -97,7 +97,7 @@ class SendMessageSyncTest {
     assertEquals(1, payload.getMessages().size());
     AgentBusinessDataResponseDTO.BusinessDataMessage msg = payload.getMessages().get(0);
     assertEquals("Confirm", msg.getType());
-    assertTrue(msg.getMessage().contains("Power Bank Tariff"));
+    assertTrue(msg.getMessage().contains("Energy Efficiency Rewards Programme"));
     assertNotNull(msg.getConfirm());
     assertEquals(1, msg.getConfirm().size());
   }
@@ -114,6 +114,22 @@ class SendMessageSyncTest {
     assertEquals("VALIDATION_ERROR", msg.getCode());
     assertNotNull(msg.getErrors());
     assertEquals(2, msg.getErrors().size());
+  }
+
+  @Test
+  void testBuildBusinessDataPayload_FailureMessageStringArray() throws Exception {
+    AgentApiResponseDTO apiResponse = loadApiResponse("failure-string-array-response.json");
+
+    AgentBusinessDataResponseDTO payload = botRequestHelper.buildBusinessDataPayload(apiResponse);
+
+    assertEquals(1, payload.getMessages().size());
+    AgentBusinessDataResponseDTO.BusinessDataMessage msg = payload.getMessages().get(0);
+    assertEquals("Failure", msg.getType());
+    assertEquals("ACTION_FAILED", msg.getCode());
+    assertNotNull(msg.getErrors());
+    assertEquals(1, msg.getErrors().size());
+    assertTrue(msg.getErrors().get(0) instanceof String);
+    assertEquals("Unfortunately a system error occurred. Please try again.", msg.getErrors().get(0));
   }
 
   @Test

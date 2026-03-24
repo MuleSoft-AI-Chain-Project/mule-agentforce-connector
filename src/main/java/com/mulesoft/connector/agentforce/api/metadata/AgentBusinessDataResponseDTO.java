@@ -36,7 +36,7 @@ public class AgentBusinessDataResponseDTO {
 
     // Failure fields
     private String code;
-    private List<Map<String, Object>> errors;
+    private List<Object> errors;
 
     // SessionEnded fields
     private String reason;
@@ -106,11 +106,11 @@ public class AgentBusinessDataResponseDTO {
       this.code = code;
     }
 
-    public List<Map<String, Object>> getErrors() {
+    public List<Object> getErrors() {
       return errors;
     }
 
-    public void setErrors(List<Map<String, Object>> errors) {
+    public void setErrors(List<Object> errors) {
       this.errors = errors;
     }
 

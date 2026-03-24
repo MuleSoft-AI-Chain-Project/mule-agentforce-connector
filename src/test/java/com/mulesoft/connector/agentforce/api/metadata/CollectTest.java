@@ -21,7 +21,7 @@ class CollectTest {
   @Test
   void testRecordDataEquals_DifferentClass() {
     Collect.RecordData recordData = new Collect.RecordData();
-    assertNotEquals(recordData, new Object());
+    assertNotEquals(new Object(), recordData);
   }
 
   @Test
@@ -53,7 +53,7 @@ class CollectTest {
   @Test
   void testRecordFieldEquals_DifferentClass() {
     Collect.RecordField recordField = new Collect.RecordField();
-    assertNotEquals(recordField, new Object());
+    assertNotEquals(new Object(), recordField);
   }
 
   @Test

@@ -55,7 +55,7 @@ public class AgentApiResponseDTO implements Serializable {
 
     // Failure fields
     private String code;
-    private List<Map<String, Object>> errors;
+    private List<Object> errors;
 
     // SessionEnded fields
     private String reason;
@@ -123,7 +123,7 @@ public class AgentApiResponseDTO implements Serializable {
       return code;
     }
 
-    public List<Map<String, Object>> getErrors() {
+    public List<Object> getErrors() {
       return errors;
     }
 

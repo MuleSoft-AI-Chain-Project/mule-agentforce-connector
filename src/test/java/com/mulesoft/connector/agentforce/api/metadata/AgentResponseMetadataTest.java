@@ -21,7 +21,7 @@ class AgentResponseMetadataTest {
   @Test
   void testEquals_DifferentClass() {
     AgentResponseMetadata metadata = new AgentResponseMetadata();
-    assertNotEquals(metadata, new Object());
+    assertNotEquals(new Object(), metadata);
   }
 
   @Test
