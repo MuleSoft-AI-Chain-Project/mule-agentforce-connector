@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mulesoft.connectors</groupId>
     <artifactId>mule4-agentforce-connector</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.5-SNAPSHOT</version>
     <packaging>mule-extension</packaging>
     <name>Agentforce Connector - Mule 4</name>
     <description>Bring the power of Agentforce to any application or process</description>
@@ -50,6 +50,7 @@
     </parent>
 
     <properties>
+        <runtimeVersion>4.6.28</runtimeVersion>
         <skipVerifications>false</skipVerifications>
         <json.version>20251224</json.version>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
