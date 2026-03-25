@@ -7,7 +7,7 @@ Prerequisites
 ---------------
 
 * Anypoint Studio 7 with Mule ESB 4.6.9 Runtime.
-* Mulesoft Agentforce Connector v1.0.0
+* Mulesoft Agentforce Connector v1.3.0+
 
 
 How to Run Sample
@@ -21,9 +21,29 @@ How to Run Sample
 About the Sample
 ----------------
 
-You can use postman to trigger curls under the web server http://localhost:8081
+You can use Postman to trigger requests to http://localhost:8081
 
 ## Endpoints
 
-* **POST** - /agentConversation
-    * **params**: _{ "prompt":"<PromptValue>" }_
+### Legacy Operation (Deprecated)
+* **POST** - `/agentConversation`
+    * **Body**: `{ "prompt": "<PromptValue>" }`
+    * **Operation**: `Continue-agent-conversation` (returns plain text)
+    * **Note**: Deprecated - use Send-message-sync instead
+
+### New Operation (Recommended)
+* **Operation**: `Send-message-sync`
+* **Returns**: Structured JSON with business data in payload and metadata in attributes
+* **Features**:
+    - Payload: `result[]`, `citedReferences[]`, `confirm[]`, `collect[]`, `message`
+    - Attributes: `messageMetadata`, `_links`, `metrics`
+
+**Demo Endpoints:**
+* **POST** - `/sendMessageSync` - Basic structured data extraction
+* **POST** - `/sendMessageSyncTyped` - Advanced type-specific processing with DataWeave pattern matching
+
+
+## Demo Files
+
+* `mule4-agentforce-bot-operations-demo.xml` - Legacy operation demo
+* `send-message-sync-demo.xml` - New operation demos with structured response handling
