@@ -19,6 +19,7 @@
         <AsyncLogger name="org.mule.runtime.core.internal.util" level="WARN"/>
         <AsyncLogger name="org.quartz" level="WARN"/>
         <AsyncLogger name="org.mule.munit.plugins.coverage.server" level="WARN"/>
+        <AsyncLogger name="com.mulesoft.connector.agentforce" level="DEBUG"/>
 
         <!-- Mule logger -->
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
