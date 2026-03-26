@@ -16,20 +16,19 @@ public class AgentResponseMetadata implements Serializable {
 
   private List<MessageMetadata> messageMetadata;
 
+  public AgentResponseMetadata() {}
+
+  public AgentResponseMetadata(Links links, List<MessageMetadata> messageMetadata) {
+    this.links = links;
+    this.messageMetadata = messageMetadata;
+  }
+
   public Links getLinks() {
     return links;
   }
 
-  public void setLinks(Links links) {
-    this.links = links;
-  }
-
   public List<MessageMetadata> getMessageMetadata() {
     return messageMetadata;
-  }
-
-  public void setMessageMetadata(List<MessageMetadata> messageMetadata) {
-    this.messageMetadata = messageMetadata;
   }
 
   @Override
@@ -64,84 +63,61 @@ public class AgentResponseMetadata implements Serializable {
     private Boolean expected;
     private String traceId;
 
-    public String getId() {
-      return id;
+    public MessageMetadata() {}
+
+    public MessageMetadata(String id, String type, String feedbackId, String planId, Boolean isContentSafe,
+                           Map<String, Object> metrics, Integer httpStatus, Long timestamp, Boolean expected,
+                           String traceId) {
+      this.id = id;
+      this.type = type;
+      this.feedbackId = feedbackId;
+      this.planId = planId;
+      this.isContentSafe = isContentSafe;
+      this.metrics = metrics;
+      this.httpStatus = httpStatus;
+      this.timestamp = timestamp;
+      this.expected = expected;
+      this.traceId = traceId;
     }
 
-    public void setId(String id) {
-      this.id = id;
+    public String getId() {
+      return id;
     }
 
     public String getType() {
       return type;
     }
 
-    public void setType(String type) {
-      this.type = type;
-    }
-
     public String getFeedbackId() {
       return feedbackId;
-    }
-
-    public void setFeedbackId(String feedbackId) {
-      this.feedbackId = feedbackId;
     }
 
     public String getPlanId() {
       return planId;
     }
 
-    public void setPlanId(String planId) {
-      this.planId = planId;
-    }
-
     public Boolean getIsContentSafe() {
       return isContentSafe;
-    }
-
-    public void setIsContentSafe(Boolean isContentSafe) {
-      this.isContentSafe = isContentSafe;
     }
 
     public Map<String, Object> getMetrics() {
       return metrics;
     }
 
-    public void setMetrics(Map<String, Object> metrics) {
-      this.metrics = metrics;
-    }
-
     public Integer getHttpStatus() {
       return httpStatus;
-    }
-
-    public void setHttpStatus(Integer httpStatus) {
-      this.httpStatus = httpStatus;
     }
 
     public Long getTimestamp() {
       return timestamp;
     }
 
-    public void setTimestamp(Long timestamp) {
-      this.timestamp = timestamp;
-    }
-
     public Boolean getExpected() {
       return expected;
     }
 
-    public void setExpected(Boolean expected) {
-      this.expected = expected;
-    }
-
     public String getTraceId() {
       return traceId;
-    }
-
-    public void setTraceId(String traceId) {
-      this.traceId = traceId;
     }
 
     @Override
@@ -178,36 +154,29 @@ public class AgentResponseMetadata implements Serializable {
     private Link session;
     private Link end;
 
-    public Link getSelf() {
-      return self;
+    public Links() {}
+
+    public Links(Link self, Link messages, Link session, Link end) {
+      this.self = self;
+      this.messages = messages;
+      this.session = session;
+      this.end = end;
     }
 
-    public void setSelf(Link self) {
-      this.self = self;
+    public Link getSelf() {
+      return self;
     }
 
     public Link getMessages() {
       return messages;
     }
 
-    public void setMessages(Link messages) {
-      this.messages = messages;
-    }
-
     public Link getSession() {
       return session;
     }
 
-    public void setSession(Link session) {
-      this.session = session;
-    }
-
     public Link getEnd() {
       return end;
-    }
-
-    public void setEnd(Link end) {
-      this.end = end;
     }
 
     @Override
@@ -233,12 +202,14 @@ public class AgentResponseMetadata implements Serializable {
 
       private String href;
 
-      public String getHref() {
-        return href;
+      public Link() {}
+
+      public Link(String href) {
+        this.href = href;
       }
 
-      public void setHref(String href) {
-        this.href = href;
+      public String getHref() {
+        return href;
       }
 
       @Override

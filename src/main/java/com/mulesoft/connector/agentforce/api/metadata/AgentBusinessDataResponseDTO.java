@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AgentBusinessDataResponseDTO {
@@ -16,6 +17,21 @@ public class AgentBusinessDataResponseDTO {
 
   public List<BusinessDataMessage> getMessages() {
     return messages;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (!(o instanceof AgentBusinessDataResponseDTO))
+      return false;
+    AgentBusinessDataResponseDTO that = (AgentBusinessDataResponseDTO) o;
+    return Objects.equals(getMessages(), that.getMessages());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getMessages());
   }
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -144,6 +160,34 @@ public class AgentBusinessDataResponseDTO {
 
     public void setError(String error) {
       this.error = error;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (!(o instanceof BusinessDataMessage))
+        return false;
+      BusinessDataMessage that = (BusinessDataMessage) o;
+      return Objects.equals(getType(), that.getType()) &&
+          Objects.equals(getMessage(), that.getMessage()) &&
+          Objects.equals(getResult(), that.getResult()) &&
+          Objects.equals(getCitedReferences(), that.getCitedReferences()) &&
+          Objects.equals(getCollect(), that.getCollect()) &&
+          Objects.equals(getConfirm(), that.getConfirm()) &&
+          Objects.equals(getCode(), that.getCode()) &&
+          Objects.equals(getErrors(), that.getErrors()) &&
+          Objects.equals(getReason(), that.getReason()) &&
+          Objects.equals(getIndicatorType(), that.getIndicatorType()) &&
+          Objects.equals(getTargets(), that.getTargets()) &&
+          Objects.equals(getError(), that.getError());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getType(), getMessage(), getResult(), getCitedReferences(),
+                          getCollect(), getConfirm(), getCode(), getErrors(), getReason(),
+                          getIndicatorType(), getTargets(), getError());
     }
   }
 }

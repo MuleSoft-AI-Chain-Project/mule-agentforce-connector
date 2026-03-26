@@ -447,11 +447,7 @@ public class BotRequestHelper {
   }
 
   AgentResponseMetadata buildMetadata(AgentApiResponseDTO apiResponse) {
-    AgentResponseMetadata metadata = new AgentResponseMetadata();
-
-    if (apiResponse.getLinks() != null) {
-      metadata.setLinks(convertLinks(apiResponse.getLinks()));
-    }
+    AgentResponseMetadata.Links links = apiResponse.getLinks() != null ? convertLinks(apiResponse.getLinks()) : null;
 
     List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
     List<AgentResponseMetadata.MessageMetadata> msgMetadataList = messages != null
@@ -460,56 +456,28 @@ public class BotRequestHelper {
             .collect(Collectors.toList())
         : java.util.Collections.emptyList();
 
-    metadata.setMessageMetadata(msgMetadataList);
-    return metadata;
+    return new AgentResponseMetadata(links, msgMetadataList);
   }
 
   private AgentResponseMetadata.MessageMetadata convertToMessageMetadata(AgentApiResponseDTO.Message msg) {
-    AgentResponseMetadata.MessageMetadata msgMeta = new AgentResponseMetadata.MessageMetadata();
-
-    msgMeta.setId(msg.getId());
-    msgMeta.setType(msg.getType());
-    msgMeta.setFeedbackId(msg.getFeedbackId());
-    msgMeta.setPlanId(msg.getPlanId());
-    msgMeta.setIsContentSafe(msg.getIsContentSafe());
-    msgMeta.setMetrics(msg.getMetrics());
-
-    // Error metadata
-    msgMeta.setHttpStatus(msg.getHttpStatus());
-    msgMeta.setTimestamp(msg.getTimestamp());
-    msgMeta.setExpected(msg.getExpected());
-    msgMeta.setTraceId(msg.getTraceId());
-
-    return msgMeta;
+    return new AgentResponseMetadata.MessageMetadata(msg.getId(), msg.getType(), msg.getFeedbackId(), msg.getPlanId(),
+                                                     msg.getIsContentSafe(), msg.getMetrics(), msg.getHttpStatus(),
+                                                     msg.getTimestamp(), msg.getExpected(), msg.getTraceId());
   }
 
   private AgentResponseMetadata.Links convertLinks(AgentApiResponseDTO.Links source) {
-    AgentResponseMetadata.Links links = new AgentResponseMetadata.Links();
+    AgentResponseMetadata.Links.Link self =
+        source.getSelf() != null ? new AgentResponseMetadata.Links.Link(source.getSelf().getHref()) : null;
 
-    if (source.getSelf() != null) {
-      AgentResponseMetadata.Links.Link self = new AgentResponseMetadata.Links.Link();
-      self.setHref(source.getSelf().getHref());
-      links.setSelf(self);
-    }
+    AgentResponseMetadata.Links.Link messages =
+        source.getMessages() != null ? new AgentResponseMetadata.Links.Link(source.getMessages().getHref()) : null;
 
-    if (source.getMessages() != null) {
-      AgentResponseMetadata.Links.Link messages = new AgentResponseMetadata.Links.Link();
-      messages.setHref(source.getMessages().getHref());
-      links.setMessages(messages);
-    }
+    AgentResponseMetadata.Links.Link session =
+        source.getSession() != null ? new AgentResponseMetadata.Links.Link(source.getSession().getHref()) : null;
 
-    if (source.getSession() != null) {
-      AgentResponseMetadata.Links.Link session = new AgentResponseMetadata.Links.Link();
-      session.setHref(source.getSession().getHref());
-      links.setSession(session);
-    }
+    AgentResponseMetadata.Links.Link end =
+        source.getEnd() != null ? new AgentResponseMetadata.Links.Link(source.getEnd().getHref()) : null;
 
-    if (source.getEnd() != null) {
-      AgentResponseMetadata.Links.Link end = new AgentResponseMetadata.Links.Link();
-      end.setHref(source.getEnd().getHref());
-      links.setEnd(end);
-    }
-
-    return links;
+    return new AgentResponseMetadata.Links(self, messages, session, end);
   }
 }
