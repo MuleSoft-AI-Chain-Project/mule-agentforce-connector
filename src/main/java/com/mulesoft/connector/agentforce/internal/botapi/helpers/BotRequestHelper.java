@@ -419,8 +419,12 @@ public class BotRequestHelper {
   }
 
   AgentBusinessDataResponseDTO buildBusinessDataPayload(AgentApiResponseDTO apiResponse) {
+    List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
+    if (messages == null) {
+      return new AgentBusinessDataResponseDTO(java.util.Collections.emptyList());
+    }
     return new AgentBusinessDataResponseDTO(
-                                            apiResponse.getMessages().stream()
+                                            messages.stream()
                                                 .map(this::convertToBusinessDataMessage)
                                                 .collect(Collectors.toList()));
   }
@@ -449,9 +453,12 @@ public class BotRequestHelper {
       metadata.setLinks(convertLinks(apiResponse.getLinks()));
     }
 
-    List<AgentResponseMetadata.MessageMetadata> msgMetadataList = apiResponse.getMessages().stream()
-        .map(this::convertToMessageMetadata)
-        .collect(Collectors.toList());
+    List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
+    List<AgentResponseMetadata.MessageMetadata> msgMetadataList = messages != null
+        ? messages.stream()
+            .map(this::convertToMessageMetadata)
+            .collect(Collectors.toList())
+        : java.util.Collections.emptyList();
 
     metadata.setMessageMetadata(msgMetadataList);
     return metadata;

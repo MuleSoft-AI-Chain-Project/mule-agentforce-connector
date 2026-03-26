@@ -95,7 +95,7 @@ public class AgentforceBotOperations {
                                   name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, AgentResponseMetadata> callback) {
 
-    log.info("Executing send message sync operation, sessionId = {}", sessionId);
+    log.debug("Executing send message sync operation, sessionId = {}", sessionId);
 
     try {
       connection.getBotRequestHelper().sendMessageSync(message, sessionId, messageSequenceNumber, readTimeout, callback);

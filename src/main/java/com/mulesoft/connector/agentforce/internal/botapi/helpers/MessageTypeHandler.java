@@ -75,8 +75,6 @@ public enum MessageTypeHandler {
 
   public void apply(AgentApiResponseDTO.Message source,
                     AgentBusinessDataResponseDTO.BusinessDataMessage target) {
-    if (handler != null) {
-      handler.accept(source, target);
-    }
+    handler.accept(source, target);
   }
 }

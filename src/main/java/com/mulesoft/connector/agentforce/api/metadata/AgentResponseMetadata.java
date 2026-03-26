@@ -156,12 +156,17 @@ public class AgentResponseMetadata implements Serializable {
           Objects.equals(getFeedbackId(), that.getFeedbackId()) &&
           Objects.equals(getPlanId(), that.getPlanId()) &&
           Objects.equals(getIsContentSafe(), that.getIsContentSafe()) &&
-          Objects.equals(getMetrics(), that.getMetrics());
+          Objects.equals(getMetrics(), that.getMetrics()) &&
+          Objects.equals(getHttpStatus(), that.getHttpStatus()) &&
+          Objects.equals(getTimestamp(), that.getTimestamp()) &&
+          Objects.equals(getExpected(), that.getExpected()) &&
+          Objects.equals(getTraceId(), that.getTraceId());
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(getId(), getType(), getFeedbackId(), getPlanId(), getIsContentSafe(), getMetrics());
+      return Objects.hash(getId(), getType(), getFeedbackId(), getPlanId(), getIsContentSafe(), getMetrics(),
+                          getHttpStatus(), getTimestamp(), getExpected(), getTraceId());
     }
   }
 
