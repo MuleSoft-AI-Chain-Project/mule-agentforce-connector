@@ -12,6 +12,7 @@ import com.mulesoft.connector.agentforce.internal.botapi.dto.BotRecord;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotSessionRequestDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentApiResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.InstanceConfigDTO;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.VariableDTO;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
 import com.mulesoft.connector.agentforce.internal.params.ReadTimeoutParams;
@@ -102,7 +103,8 @@ public class BotRequestHelper {
   }
 
 
-  public void startSession(String agentId, boolean byPassUser, ReadTimeoutParams readTimeout,
+  public void startSession(String agentId, boolean byPassUser, List<VariableDTO> variables,
+                           ReadTimeoutParams readTimeout,
                            CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
@@ -110,7 +112,7 @@ public class BotRequestHelper {
         + agentId + URI_BOT_API_SESSIONS;
     String externalSessionKey = UUID.randomUUID().toString();
     String endpoint = agentforceConnection.getSalesforceOrgUrl();
-    BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser);
+    BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser, variables);
 
     log.debug("Agentforce start session details. Request URL: {}, external Session Key:{}," +
         " endpoint: {}", startSessionUrl, externalSessionKey, endpoint);
@@ -131,7 +133,7 @@ public class BotRequestHelper {
             + URI_BOT_API_MESSAGES;
 
     BotContinueSessionRequestDTO payload =
-        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber);
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber,null);
 
     log.info("Agentforce continue session details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
 
@@ -143,7 +145,7 @@ public class BotRequestHelper {
   }
 
   public void sendMessageSync(InputStream message, String sessionId, int messageSequenceNumber,
-                              ReadTimeoutParams readTimeout,
+                              List<VariableDTO> variables, ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, AgentResponseMetadata> callback)
       throws IOException {
 
@@ -152,7 +154,7 @@ public class BotRequestHelper {
             + URI_BOT_API_MESSAGES;
 
     BotContinueSessionRequestDTO payload =
-        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber);
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber, variables);
 
     log.info("Agentforce send message sync details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
 
@@ -176,22 +178,24 @@ public class BotRequestHelper {
 
   private BotSessionRequestDTO createStartSessionRequestPayload(String externalSessionKey,
                                                                 String endpoint,
-                                                                boolean byPassUser) {
+                                                                boolean byPassUser,
+                                                                List<VariableDTO> variables) {
 
     InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
     instanceConfigDTO.setEndpoint(endpoint);
-    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser);
+    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser, variables);
   }
 
   private BotContinueSessionRequestDTO createContinueSessionRequestPayload(String message,
-                                                                           int messageSequenceNumber) {
+                                                                           int messageSequenceNumber,
+                                                                           List<VariableDTO> variables) {
 
     BotContinueSessionRequestDTO.Message messageDTO = new BotContinueSessionRequestDTO.Message();
     messageDTO.setText(message);
     messageDTO.setSequenceId(messageSequenceNumber);
     messageDTO.setType(CONTINUE_SESSION_MESSAGE_TYPE_TEXT);
 
-    return new BotContinueSessionRequestDTO(messageDTO);
+    return new BotContinueSessionRequestDTO(messageDTO, variables);
   }
 
   private MultiMap<String, String> addConnectionHeaders(String accessToken) {

@@ -2,6 +2,7 @@ package com.mulesoft.connector.agentforce.internal.operation;
 
 import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.VariableDTO;
 import com.mulesoft.connector.agentforce.internal.error.provider.BotErrorTypeProvider;
 import com.mulesoft.connector.agentforce.internal.botapi.group.BotAgentParameterGroup;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
@@ -16,6 +17,7 @@ import org.mule.runtime.extension.api.annotation.metadata.fixed.OutputJsonType;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
@@ -24,6 +26,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.process.CompletionCallback;
 
 import java.io.InputStream;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +51,8 @@ public class AgentforceBotOperations {
 
     log.info("Executing start agent conversation operation, agent = {}", parameterGroup.getAgent());
     try {
-      connection.getBotRequestHelper().startSession(parameterGroup.getAgent(), parameterGroup.getByPassUser(), readTimeout,
-                                                    callback);
+      connection.getBotRequestHelper().startSession(parameterGroup.getAgent(), parameterGroup.getByPassUser(),
+                                                    parameterGroup.getVariables(), readTimeout, callback);
     } catch (Exception e) {
       callback.error(new ModuleException("Error while starting agent conversation for agent: " + parameterGroup.getAgent(),
                                          AGENT_OPERATIONS_FAILURE, e));
@@ -91,6 +94,7 @@ public class AgentforceBotOperations {
                               @Content(primary = true) InputStream message,
                               @Content String sessionId,
                               @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
+                              @Optional @Summary("Array of custom and context agent variables ") @DisplayName("Variables") List<VariableDTO> variables,
                               @ParameterGroup(
                                   name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, AgentResponseMetadata> callback) {
@@ -98,7 +102,8 @@ public class AgentforceBotOperations {
     log.debug("Executing send message sync operation, sessionId = {}", sessionId);
 
     try {
-      connection.getBotRequestHelper().sendMessageSync(message, sessionId, messageSequenceNumber, readTimeout, callback);
+      connection.getBotRequestHelper().sendMessageSync(message, sessionId, messageSequenceNumber, variables, readTimeout,
+                                                       callback);
     } catch (Exception e) {
       callback.error(new ModuleException("Error in send message sync for session id: " + sessionId,
                                          AGENT_OPERATIONS_FAILURE, e));
