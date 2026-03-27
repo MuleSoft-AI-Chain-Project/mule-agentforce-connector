@@ -133,7 +133,7 @@ public class BotRequestHelper {
             + URI_BOT_API_MESSAGES;
 
     BotContinueSessionRequestDTO payload =
-        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber,null);
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber, null);
 
     log.info("Agentforce continue session details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
 
