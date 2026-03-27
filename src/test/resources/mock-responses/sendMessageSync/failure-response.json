@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "type": "Failure",
+      "code": "ACTION_FAILED",
+      "errors": ["Unfortunately a system error occurred. Please try again."],
+      "message": "",
+      "id": "test-failure-id",
+      "metrics": {},
+      "feedbackId": "test-feedback-id",
+      "planId": "test-plan-id",
+      "isContentSafe": true
+    }
+  ],
+  "_links": {
+    "self": null,
+    "messages": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/test-session/messages"
+    },
+    "messagesStream": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/test-session/messages/stream"
+    },
+    "session": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/agents/test-agent/sessions"
+    },
+    "end": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/test-session"
+    }
+  }
+}

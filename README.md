@@ -3,9 +3,10 @@
 ## <img src="icon/icon.svg" width="6%" alt="banner"> [MuleSoft AI Chain - Agentforce Connector](https://mac-project.ai/docs/einstein-ai)
 
 Agentforce Connector provides a way to interact with the _Bots API_ of the Salesforce platform and benefit from the agent related capabilities. It allows you to:
-- **Start Agent Conversation**
-- **Continue Agent Conversation**
-- **End Agent Conversation**
+- **Start Agent Conversation** - Initiate a new agent session
+- **Send Message (Sync)** - Send messages and receive structured JSON responses
+- **Continue Agent Conversation** - Send messages with plain text response (deprecated)
+- **End Agent Conversation** - Terminate an agent session
 
 ### Requirements
 

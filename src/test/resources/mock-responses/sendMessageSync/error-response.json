@@ -1,0 +1,34 @@
+{
+  "messages": [
+    {
+      "type": "Error",
+      "feedbackId": "i9j0k1l2-3456-78h0-4567-901234567i23",
+      "isContentSafe": true,
+      "message": "An unexpected error occurred while processing your request.",
+      "id": "j0k1l2m3-4567-89i0-5678-012345678j34",
+      "metrics": {},
+      "planId": "i9j0k1l2-3456-78h0-4567-901234567i23",
+      "error": "INTERNAL_SERVER_ERROR",
+      "httpStatus": 500,
+      "timestamp": 1773998000000,
+      "expected": false,
+      "traceId": "trace-123-456-789",
+      "botMode": "production"
+    }
+  ],
+  "_links": {
+    "self": null,
+    "messages": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages"
+    },
+    "messagesStream": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages/stream"
+    },
+    "session": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/agents/0XxJ9000000si5iKAA/sessions"
+    },
+    "end": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84"
+    }
+  }
+}
