@@ -58,13 +58,13 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
         </munit:execution>
         <munit:validation >
             <munit-tools:assert-that doc:name="Assert attributes exist" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b970" expression="#[attributes]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b971" expression="#[attributes.messageMetadata]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata not empty" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b972" expression="#[sizeOf(attributes.messageMetadata)]" is="#[MunitTools::greaterThan(0)]"/>
-            <munit-tools:assert-that doc:name="Assert metadata type is Inform" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b973" expression="#[attributes.messageMetadata[0].'type']" is="#[MunitTools::equalTo('Inform')]"/>
-            <munit-tools:assert-that doc:name="Assert metadata id exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b974" expression="#[attributes.messageMetadata[0].id]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert feedbackId exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b975" expression="#[attributes.messageMetadata[0].feedbackId]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert planId exists" doc:id="g17a18cd-da3a-4064-af44-e4553fd8b976" expression="#[attributes.messageMetadata[0].planId]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert isContentSafe is boolean" doc:id="h17a18cd-da3a-4064-af44-e4553fd8b977" expression="#[attributes.messageMetadata[0].isContentSafe]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b971" expression="#[attributes.messagesMetadata]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata not empty" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b972" expression="#[sizeOf(attributes.messagesMetadata)]" is="#[MunitTools::greaterThan(0)]"/>
+            <munit-tools:assert-that doc:name="Assert metadata type is Inform" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b973" expression="#[attributes.messagesMetadata[0].'type']" is="#[MunitTools::equalTo('Inform')]"/>
+            <munit-tools:assert-that doc:name="Assert metadata id exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b974" expression="#[attributes.messagesMetadata[0].id]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert feedbackId exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b975" expression="#[attributes.messagesMetadata[0].feedbackId]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert planId exists" doc:id="g17a18cd-da3a-4064-af44-e4553fd8b976" expression="#[attributes.messagesMetadata[0].planId]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert isContentSafe is boolean" doc:id="h17a18cd-da3a-4064-af44-e4553fd8b977" expression="#[attributes.messagesMetadata[0].isContentSafe]" is="#[MunitTools::notNullValue()]"/>
         </munit:validation>
     </munit:test>
 

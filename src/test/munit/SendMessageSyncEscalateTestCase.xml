@@ -44,12 +44,12 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
         </munit:execution>
         <munit:validation >
             <munit-tools:assert-that doc:name="Assert attributes exist" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b977" expression="#[attributes]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b978" expression="#[attributes.messageMetadata]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata has 2 elements" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b979" expression="#[sizeOf(attributes.messageMetadata)]" is="#[MunitTools::equalTo(2)]"/>
-            <munit-tools:assert-that doc:name="Assert first metadata type is Inform" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b97a" expression="#[attributes.messageMetadata[0].'type']" is="#[MunitTools::equalTo('Inform')]"/>
-            <munit-tools:assert-that doc:name="Assert second metadata type is Escalate" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b97b" expression="#[attributes.messageMetadata[1].'type']" is="#[MunitTools::equalTo('Escalate')]"/>
-            <munit-tools:assert-that doc:name="Assert first metadata id exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b97c" expression="#[attributes.messageMetadata[0].id]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert second metadata id exists" doc:id="g17a18cd-da3a-4064-af44-e4553fd8b97d" expression="#[attributes.messageMetadata[1].id]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b978" expression="#[attributes.messagesMetadata]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata has 2 elements" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b979" expression="#[sizeOf(attributes.messagesMetadata)]" is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that doc:name="Assert first metadata type is Inform" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b97a" expression="#[attributes.messagesMetadata[0].'type']" is="#[MunitTools::equalTo('Inform')]"/>
+            <munit-tools:assert-that doc:name="Assert second metadata type is Escalate" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b97b" expression="#[attributes.messagesMetadata[1].'type']" is="#[MunitTools::equalTo('Escalate')]"/>
+            <munit-tools:assert-that doc:name="Assert first metadata id exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b97c" expression="#[attributes.messagesMetadata[0].id]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert second metadata id exists" doc:id="g17a18cd-da3a-4064-af44-e4553fd8b97d" expression="#[attributes.messagesMetadata[1].id]" is="#[MunitTools::notNullValue()]"/>
         </munit:validation>
     </munit:test>
 

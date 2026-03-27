@@ -45,13 +45,13 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
         </munit:execution>
         <munit:validation >
             <munit-tools:assert-that doc:name="Assert attributes exist" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b98b" expression="#[attributes]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b98c" expression="#[attributes.messageMetadata]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata has 1 element" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b98d" expression="#[sizeOf(attributes.messageMetadata)]" is="#[MunitTools::equalTo(1)]"/>
-            <munit-tools:assert-that doc:name="Assert metadata type is Failure" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b98e" expression="#[attributes.messageMetadata[0].'type']" is="#[MunitTools::equalTo('Failure')]"/>
-            <munit-tools:assert-that doc:name="Assert metadata id exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b98f" expression="#[attributes.messageMetadata[0].id]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert feedbackId exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b990" expression="#[attributes.messageMetadata[0].feedbackId]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert planId exists" doc:id="g17a18cd-da3a-4064-af44-e4553fd8b991" expression="#[attributes.messageMetadata[0].planId]" is="#[MunitTools::notNullValue()]"/>
-            <logger level="INFO" doc:name="Log metadata" doc:id="701239c9-3db7-4896-84e8-3febe24636e1" message="#['Metadata - Type: ' ++ attributes.messageMetadata[0].'type' ++ ', ID: ' ++ attributes.messageMetadata[0].id]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b98c" expression="#[attributes.messagesMetadata]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata has 1 element" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b98d" expression="#[sizeOf(attributes.messagesMetadata)]" is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:assert-that doc:name="Assert metadata type is Failure" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b98e" expression="#[attributes.messagesMetadata[0].'type']" is="#[MunitTools::equalTo('Failure')]"/>
+            <munit-tools:assert-that doc:name="Assert metadata id exists" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b98f" expression="#[attributes.messagesMetadata[0].id]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert feedbackId exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b990" expression="#[attributes.messagesMetadata[0].feedbackId]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert planId exists" doc:id="g17a18cd-da3a-4064-af44-e4553fd8b991" expression="#[attributes.messagesMetadata[0].planId]" is="#[MunitTools::notNullValue()]"/>
+            <logger level="INFO" doc:name="Log metadata" doc:id="701239c9-3db7-4896-84e8-3febe24636e1" message="#['Metadata - Type: ' ++ attributes.messagesMetadata[0].'type' ++ ', ID: ' ++ attributes.messagesMetadata[0].id]"/>
         </munit:validation>
     </munit:test>
 

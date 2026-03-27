@@ -28,7 +28,7 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
         <munit:validation >
             <munit-tools:assert-that doc:name="Assert payload is not null" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b95b" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
             <munit-tools:assert-that doc:name="Assert attributes exist" doc:id="e17a18cd-da3a-4064-af44-e4553fd8b95c" expression="#[attributes]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b95d" expression="#[attributes.messageMetadata]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="f17a18cd-da3a-4064-af44-e4553fd8b95d" expression="#[attributes.messagesMetadata]" is="#[MunitTools::notNullValue()]"/>
         </munit:validation>
     </munit:test>
 
@@ -77,10 +77,10 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
             </ms-agentforce:send-message-sync>
         </munit:execution>
         <munit:validation >
-            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b96a" expression="#[attributes.messageMetadata]" is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messageMetadata is not empty" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b96b" expression="#[sizeOf(attributes.messageMetadata)]" is="#[MunitTools::greaterThan(0)]"/>
-            <munit-tools:assert-that doc:name="Assert message type exists" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b96c" expression="#[attributes.messageMetadata[0].'type']" is="#[MunitTools::notNullValue()]"/>
-            <logger level="INFO" doc:name="Log attributes" doc:id="301239c9-3db7-4896-84e8-3febe24636c6" message="#['Message count: ' ++ sizeOf(attributes.messageMetadata) ++ ', first message type: ' ++ attributes.messageMetadata[0].'type']"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata exists" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b96a" expression="#[attributes.messagesMetadata]" is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messageMetadata is not empty" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b96b" expression="#[sizeOf(attributes.messagesMetadata)]" is="#[MunitTools::greaterThan(0)]"/>
+            <munit-tools:assert-that doc:name="Assert message type exists" doc:id="d17a18cd-da3a-4064-af44-e4553fd8b96c" expression="#[attributes.messagesMetadata[0].'type']" is="#[MunitTools::notNullValue()]"/>
+            <logger level="INFO" doc:name="Log attributes" doc:id="301239c9-3db7-4896-84e8-3febe24636c6" message="#['Message count: ' ++ sizeOf(attributes.messagesMetadata) ++ ', first message type: ' ++ attributes.messagesMetadata[0].'type']"/>
         </munit:validation>
     </munit:test>
 
