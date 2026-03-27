@@ -1,0 +1,108 @@
+{
+  "messages": [
+    {
+      "type": "Inform",
+      "feedbackId": "f8308c08-5c63-479f-af71-c1e80ccdb166",
+      "isContentSafe": true,
+      "message": "Here are the current promotions available in the Energy Efficiency Rewards Programme. Let me know if you'd like more details about any of them!",
+      "id": "514a235a-59fd-42df-ab7b-fbeaafc1a0be",
+      "metrics": {},
+      "planId": "f8308c08-5c63-479f-af71-c1e80ccdb166",
+      "result": [
+        {
+          "type": "copilotActionOutput/Energy_Efficiency_Rewards_Active_Promotions_179J9000000wm0S",
+          "value": {
+            "listOfPromos": [
+              {
+                "id": "0c8J9000000kKnSIAU",
+                "sObjectInfo": {
+                  "apiName": "Promotion",
+                  "label": "Promotion"
+                },
+                "recordTypeId": "012000000000000AAA",
+                "title": "Power Bank Tariff",
+                "data": {
+                  "Name": {
+                    "displayValue": "Power Bank Tariff",
+                    "value": "Power Bank Tariff"
+                  },
+                  "Description": {
+                    "displayValue": null,
+                    "value": null
+                  },
+                  "Id": {
+                    "displayValue": null,
+                    "value": "0c8J9000000kKnSIAU"
+                  }
+                }
+              },
+              {
+                "id": "0c8J9000000kKnDIAU",
+                "sObjectInfo": {
+                  "apiName": "Promotion",
+                  "label": "Promotion"
+                },
+                "recordTypeId": "012000000000000AAA",
+                "title": "Ninja AF100UK Grey 3.8L Air Fryer Discount",
+                "data": {
+                  "Name": {
+                    "displayValue": "Ninja AF100UK Grey 3.8L Air Fryer Discount",
+                    "value": "Ninja AF100UK Grey 3.8L Air Fryer Discount"
+                  },
+                  "Description": {
+                    "displayValue": "20% discount on a Ninja AF100UK Grey 3.8L Air Fryer when bought through Ruby's",
+                    "value": "20% discount on a Ninja AF100UK Grey 3.8L Air Fryer when bought through Ruby's"
+                  },
+                  "Id": {
+                    "displayValue": null,
+                    "value": "0c8J9000000kKnDIAU"
+                  }
+                }
+              },
+              {
+                "id": "0c8J9000000kKnNIAU",
+                "sObjectInfo": {
+                  "apiName": "Promotion",
+                  "label": "Promotion"
+                },
+                "recordTypeId": "012000000000000AAA",
+                "title": "Rubys £20 off",
+                "data": {
+                  "Name": {
+                    "displayValue": "Rubys £20 off",
+                    "value": "Rubys £20 off"
+                  },
+                  "Description": {
+                    "displayValue": null,
+                    "value": null
+                  },
+                  "Id": {
+                    "displayValue": null,
+                    "value": "0c8J9000000kKnNIAU"
+                  }
+                }
+              }
+            ]
+          },
+          "property": ""
+        }
+      ],
+      "citedReferences": []
+    }
+  ],
+  "_links": {
+    "self": null,
+    "messages": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0a77-5912-7ace-87d6-5d125cd0a8e4/messages"
+    },
+    "messagesStream": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0a77-5912-7ace-87d6-5d125cd0a8e4/messages/stream"
+    },
+    "session": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/agents/0XxJ9000000si5iKAA/sessions"
+    },
+    "end": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0a77-5912-7ace-87d6-5d125cd0a8e4"
+    }
+  }
+}
