@@ -14,21 +14,21 @@ public class AgentResponseMetadata implements Serializable {
   @JsonProperty("_links")
   private Links links;
 
-  private List<MessageMetadata> messageMetadata;
+  private List<MessageMetadata> messagesMetadata;
 
   public AgentResponseMetadata() {}
 
-  public AgentResponseMetadata(Links links, List<MessageMetadata> messageMetadata) {
+  public AgentResponseMetadata(Links links, List<MessageMetadata> messagesMetadata) {
     this.links = links;
-    this.messageMetadata = messageMetadata;
+    this.messagesMetadata = messagesMetadata;
   }
 
   public Links getLinks() {
     return links;
   }
 
-  public List<MessageMetadata> getMessageMetadata() {
-    return messageMetadata;
+  public List<MessageMetadata> getMessagesMetadata() {
+    return messagesMetadata;
   }
 
   @Override
@@ -39,12 +39,12 @@ public class AgentResponseMetadata implements Serializable {
       return false;
     AgentResponseMetadata that = (AgentResponseMetadata) o;
     return Objects.equals(getLinks(), that.getLinks()) &&
-        Objects.equals(getMessageMetadata(), that.getMessageMetadata());
+        Objects.equals(getMessagesMetadata(), that.getMessagesMetadata());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getLinks(), getMessageMetadata());
+    return Objects.hash(getLinks(), getMessagesMetadata());
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)

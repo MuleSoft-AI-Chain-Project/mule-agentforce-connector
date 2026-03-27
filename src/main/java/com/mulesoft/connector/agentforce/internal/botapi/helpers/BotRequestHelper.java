@@ -1,6 +1,5 @@
 package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
@@ -450,13 +449,13 @@ public class BotRequestHelper {
     AgentResponseMetadata.Links links = apiResponse.getLinks() != null ? convertLinks(apiResponse.getLinks()) : null;
 
     List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
-    List<AgentResponseMetadata.MessageMetadata> msgMetadataList = messages != null
+    List<AgentResponseMetadata.MessageMetadata> messagesMetadata = messages != null
         ? messages.stream()
             .map(this::convertToMessageMetadata)
             .collect(Collectors.toList())
         : java.util.Collections.emptyList();
 
-    return new AgentResponseMetadata(links, msgMetadataList);
+    return new AgentResponseMetadata(links, messagesMetadata);
   }
 
   private AgentResponseMetadata.MessageMetadata convertToMessageMetadata(AgentApiResponseDTO.Message msg) {

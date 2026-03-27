@@ -32,14 +32,10 @@ public enum MessageTypeHandler {
     target.setErrors(source.getErrors());
   }),
 
-  SESSION_ENDED("SessionEnded", (source, target) -> {
-    target.setReason(source.getReason());
-  }),
+  SESSION_ENDED("SessionEnded", (source, target) -> target.setReason(source.getReason())),
 
   // Escalation types
-  ESCALATE("Escalate", (source, target) -> {
-    target.setTargets(source.getTargets());
-  }),
+  ESCALATE("Escalate", (source, target) -> target.setTargets(source.getTargets())),
 
   // Error type
   ERROR("Error", (source, target) -> {

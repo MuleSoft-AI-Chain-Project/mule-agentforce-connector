@@ -61,8 +61,8 @@ class SendMessageSyncTest {
     AgentResponseMetadata metadata = botRequestHelper.buildMetadata(apiResponse);
 
     assertNotNull(metadata, "Metadata should not be null");
-    assertEquals(1, metadata.getMessageMetadata().size());
-    AgentResponseMetadata.MessageMetadata msgMeta = metadata.getMessageMetadata().get(0);
+    assertEquals(1, metadata.getMessagesMetadata().size());
+    AgentResponseMetadata.MessageMetadata msgMeta = metadata.getMessagesMetadata().get(0);
     assertEquals("Inform", msgMeta.getType());
     assertEquals("f8308c08-5c63-479f-af71-c1e80ccdb166", msgMeta.getFeedbackId());
     assertEquals("f8308c08-5c63-479f-af71-c1e80ccdb166", msgMeta.getPlanId());
@@ -148,7 +148,7 @@ class SendMessageSyncTest {
 
     AgentResponseMetadata metadata = botRequestHelper.buildMetadata(apiResponse);
 
-    AgentResponseMetadata.MessageMetadata msgMeta = metadata.getMessageMetadata().get(0);
+    AgentResponseMetadata.MessageMetadata msgMeta = metadata.getMessagesMetadata().get(0);
     assertEquals(500, msgMeta.getHttpStatus());
     assertEquals(1773998000000L, msgMeta.getTimestamp());
     assertFalse(msgMeta.getExpected());
@@ -187,8 +187,8 @@ class SendMessageSyncTest {
 
     AgentResponseMetadata metadata = botRequestHelper.buildMetadata(apiResponse);
 
-    assertEquals(2, metadata.getMessageMetadata().size(), "Should have 2 message metadata");
-    assertEquals("3c907722-710d-403d-9d7a-7d43f07a5183", metadata.getMessageMetadata().get(0).getId());
-    assertEquals("a133c185-73a7-4adf-b6d9-b7fd62babb4e", metadata.getMessageMetadata().get(1).getId());
+    assertEquals(2, metadata.getMessagesMetadata().size(), "Should have 2 message metadata");
+    assertEquals("3c907722-710d-403d-9d7a-7d43f07a5183", metadata.getMessagesMetadata().get(0).getId());
+    assertEquals("a133c185-73a7-4adf-b6d9-b7fd62babb4e", metadata.getMessagesMetadata().get(1).getId());
   }
 }
