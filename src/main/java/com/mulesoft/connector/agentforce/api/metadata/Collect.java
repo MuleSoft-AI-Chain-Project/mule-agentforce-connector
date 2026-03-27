@@ -29,6 +29,23 @@ public class Collect implements Serializable {
     return data;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (!(o instanceof Collect))
+      return false;
+    Collect collect = (Collect) o;
+    return Objects.equals(getTargetType(), collect.getTargetType()) &&
+        Objects.equals(getTargetProperty(), collect.getTargetProperty()) &&
+        Objects.equals(getData(), collect.getData());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getTargetType(), getTargetProperty(), getData());
+  }
+
   @JsonIgnoreProperties(ignoreUnknown = true)
   public static class CollectData implements Serializable {
 
@@ -49,6 +66,23 @@ public class Collect implements Serializable {
 
     public List<SearchResult> getValue() {
       return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (!(o instanceof CollectData))
+        return false;
+      CollectData that = (CollectData) o;
+      return Objects.equals(getType(), that.getType()) &&
+          Objects.equals(getProperty(), that.getProperty()) &&
+          Objects.equals(getValue(), that.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getType(), getProperty(), getValue());
     }
   }
 
@@ -85,6 +119,25 @@ public class Collect implements Serializable {
     public RecordData getData() {
       return data;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (!(o instanceof SearchResult))
+        return false;
+      SearchResult that = (SearchResult) o;
+      return Objects.equals(getId(), that.getId()) &&
+          Objects.equals(getSObjectInfo(), that.getSObjectInfo()) &&
+          Objects.equals(getRecordTypeId(), that.getRecordTypeId()) &&
+          Objects.equals(getTitle(), that.getTitle()) &&
+          Objects.equals(getData(), that.getData());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getId(), getSObjectInfo(), getRecordTypeId(), getTitle(), getData());
+    }
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
@@ -101,6 +154,22 @@ public class Collect implements Serializable {
 
     public String getLabel() {
       return label;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (!(o instanceof SObjectInfo))
+        return false;
+      SObjectInfo that = (SObjectInfo) o;
+      return Objects.equals(getApiName(), that.getApiName()) &&
+          Objects.equals(getLabel(), that.getLabel());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getApiName(), getLabel());
     }
   }
 

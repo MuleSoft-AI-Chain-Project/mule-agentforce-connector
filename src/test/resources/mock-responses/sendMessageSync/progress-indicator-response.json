@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "type": "ProgressIndicator",
+      "feedbackId": "g7h8i9j0-1234-56f0-2345-789012345g01",
+      "isContentSafe": true,
+      "message": "Analyzing your consumption data...",
+      "id": "h8i9j0k1-2345-67g0-3456-890123456h12",
+      "metrics": {},
+      "planId": "g7h8i9j0-1234-56f0-2345-789012345g01",
+      "indicatorType": "Processing"
+    }
+  ],
+  "_links": {
+    "self": null,
+    "messages": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages"
+    },
+    "messagesStream": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages/stream"
+    },
+    "session": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/agents/0XxJ9000000si5iKAA/sessions"
+    },
+    "end": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84"
+    }
+  }
+}

@@ -2,13 +2,15 @@ package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
-import com.mulesoft.connector.agentforce.internal.config.AgentforceConfiguration;
+import com.mulesoft.connector.agentforce.api.metadata.AgentBusinessDataResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentConversationResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentMetadataResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotContinueSessionRequestDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotRecord;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotSessionRequestDTO;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentApiResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.InstanceConfigDTO;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
@@ -140,6 +142,27 @@ public class BotRequestHelper {
                 this::parseResponseForContinueSession);
   }
 
+  public void sendMessageSync(InputStream message, String sessionId, int messageSequenceNumber,
+                              ReadTimeoutParams readTimeout,
+                              CompletionCallback<InputStream, AgentResponseMetadata> callback)
+      throws IOException {
+
+    String continueSessionUrl =
+        agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_SESSIONS + SLASH + sessionId
+            + URI_BOT_API_MESSAGES;
+
+    BotContinueSessionRequestDTO payload =
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber);
+
+    log.info("Agentforce send message sync details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
+
+    InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
+        .getBytes(StandardCharsets.UTF_8));
+
+    sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, readTimeout, callback,
+                this::parseResponseForSendMessageSync);
+  }
+
   public void endSession(String sessionId, ReadTimeoutParams readTimeout,
                          CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
 
@@ -233,7 +256,7 @@ public class BotRequestHelper {
                                                                  rootNode, InvokeAgentResponseAttributes.class));
       responseDTO.setSessionId(getTextValue(rootNode, SESSION_ID));
       responseDTO.setText(getMessageText(rootNode));
-    } catch (Exception e) {
+    } catch (IOException e) {
       throw new ModuleException("Error in parsing response ", AGENT_OPERATIONS_FAILURE, e);
     }
     return responseDTO;
@@ -256,10 +279,10 @@ public class BotRequestHelper {
     }
   }
 
-  private <T> void sendRequest(String url, String httpMethod, InputStream payloadStream,
-                               ReadTimeoutParams readTimeout,
-                               CompletionCallback<T, InvokeAgentResponseAttributes> callback,
-                               Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
+  private <T, A> void sendRequest(String url, String httpMethod, InputStream payloadStream,
+                                  ReadTimeoutParams readTimeout,
+                                  CompletionCallback<T, A> callback,
+                                  Function<InputStream, Result<T, A>> responseParser) {
     log.debug("Agentforce request details. Request URL: {}", url);
 
     HttpRequestOptions httpRequestOptions = HttpRequestOptions.builder()
@@ -278,9 +301,9 @@ public class BotRequestHelper {
     completableFuture.whenComplete((response, exception) -> handleResponse(response, exception, callback, responseParser));
   }
 
-  private <T> void handleResponse(HttpResponse response, Throwable exception,
-                                  CompletionCallback<T, InvokeAgentResponseAttributes> callback,
-                                  Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
+  private <T, A> void handleResponse(HttpResponse response, Throwable exception,
+                                     CompletionCallback<T, A> callback,
+                                     Function<InputStream, Result<T, A>> responseParser) {
     if (exception != null) {
       log.debug("Exception in bot api call ", exception);
       callback.error(exception);
@@ -292,7 +315,7 @@ public class BotRequestHelper {
     }
 
     try {
-      Result<T, InvokeAgentResponseAttributes> result = responseParser.apply(contentStream);
+      Result<T, A> result = responseParser.apply(contentStream);
       callback.success(result);
     } catch (Exception e) {
       log.debug("Error while parsing response", e);
@@ -322,7 +345,7 @@ public class BotRequestHelper {
     }
   }
 
-  private InputStream parseHttpResponse(HttpResponse httpResponse, CompletionCallback callback) {
+  private <T, A> InputStream parseHttpResponse(HttpResponse httpResponse, CompletionCallback<T, A> callback) {
 
     int statusCode = httpResponse.getStatusCode();
     log.debug("Parsing Http Response, statusCode = {}", statusCode);
@@ -369,5 +392,91 @@ public class BotRequestHelper {
         .method(httpMethod)
         .entity(httpEntity)
         .build();
+  }
+
+  Result<InputStream, AgentResponseMetadata> parseResponseForSendMessageSync(InputStream responseStream) {
+    try {
+      AgentApiResponseDTO apiResponse =
+          objectMapper.readValue(responseStream, AgentApiResponseDTO.class);
+
+      // Build payload with business data
+      AgentBusinessDataResponseDTO businessData = buildBusinessDataPayload(apiResponse);
+
+      // Build metadata (no business data)
+      AgentResponseMetadata metadata = buildMetadata(apiResponse);
+
+      return Result.<InputStream, AgentResponseMetadata>builder()
+          .output(toInputStream(objectMapper.writeValueAsString(businessData), StandardCharsets.UTF_8))
+          .attributes(metadata)
+          .attributesMediaType(MediaType.APPLICATION_JAVA)
+          .mediaType(MediaType.APPLICATION_JSON)
+          .build();
+
+    } catch (IOException e) {
+      throw new ModuleException("Error parsing send message sync response", AGENT_OPERATIONS_FAILURE, e);
+    }
+  }
+
+  AgentBusinessDataResponseDTO buildBusinessDataPayload(AgentApiResponseDTO apiResponse) {
+    List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
+    if (messages == null) {
+      return new AgentBusinessDataResponseDTO(java.util.Collections.emptyList());
+    }
+    return new AgentBusinessDataResponseDTO(
+                                            messages.stream()
+                                                .map(this::convertToBusinessDataMessage)
+                                                .collect(Collectors.toList()));
+  }
+
+  private AgentBusinessDataResponseDTO.BusinessDataMessage convertToBusinessDataMessage(
+                                                                                        AgentApiResponseDTO.Message msg) {
+    AgentBusinessDataResponseDTO.BusinessDataMessage businessMsg =
+        new AgentBusinessDataResponseDTO.BusinessDataMessage(msg.getType());
+
+    MessageTypeHandler handler = MessageTypeHandler.fromTypeName(msg.getType());
+
+    if (handler != null) {
+      handler.apply(msg, businessMsg);
+    } else {
+      log.warn("Unknown message type: {}", msg.getType());
+      businessMsg.setMessage(msg.getMessage());
+    }
+
+    return businessMsg;
+  }
+
+  AgentResponseMetadata buildMetadata(AgentApiResponseDTO apiResponse) {
+    AgentResponseMetadata.Links links = apiResponse.getLinks() != null ? convertLinks(apiResponse.getLinks()) : null;
+
+    List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
+    List<AgentResponseMetadata.MessageMetadata> messagesMetadata = messages != null
+        ? messages.stream()
+            .map(this::convertToMessageMetadata)
+            .collect(Collectors.toList())
+        : java.util.Collections.emptyList();
+
+    return new AgentResponseMetadata(links, messagesMetadata);
+  }
+
+  private AgentResponseMetadata.MessageMetadata convertToMessageMetadata(AgentApiResponseDTO.Message msg) {
+    return new AgentResponseMetadata.MessageMetadata(msg.getId(), msg.getType(), msg.getFeedbackId(), msg.getPlanId(),
+                                                     msg.getIsContentSafe(), msg.getMetrics(), msg.getHttpStatus(),
+                                                     msg.getTimestamp(), msg.getExpected(), msg.getTraceId());
+  }
+
+  private AgentResponseMetadata.Links convertLinks(AgentApiResponseDTO.Links source) {
+    AgentResponseMetadata.Links.Link self =
+        source.getSelf() != null ? new AgentResponseMetadata.Links.Link(source.getSelf().getHref()) : null;
+
+    AgentResponseMetadata.Links.Link messages =
+        source.getMessages() != null ? new AgentResponseMetadata.Links.Link(source.getMessages().getHref()) : null;
+
+    AgentResponseMetadata.Links.Link session =
+        source.getSession() != null ? new AgentResponseMetadata.Links.Link(source.getSession().getHref()) : null;
+
+    AgentResponseMetadata.Links.Link end =
+        source.getEnd() != null ? new AgentResponseMetadata.Links.Link(source.getEnd().getHref()) : null;
+
+    return new AgentResponseMetadata.Links(self, messages, session, end);
   }
 }
