@@ -48,15 +48,14 @@
             </ms-agentforce:end-agent-conversation>
 
             <!-- SCENARIO 2: WITH Variables - Agent should bypass verification -->
-            <logger level="INFO" doc:name="Log Scenario 2" message="=== SCENARIO 2: Start session WITH variables (VerifiedCustomerId + isVerified) ==="/>
+            <logger level="INFO" doc:name="Log Scenario 2" message="=== SCENARIO 2: Start session WITH variables (verifiedContactID=003Ig00000DsENIIA3) ==="/>
             <ms-agentforce:start-agent-conversation doc:name="Start agent WITH variables"
                                                      config-ref="Agentforce_Config_New"
                                                      agent="${config.bot-id-new}"
                                                      readTimeout="80"
                                                      readTimeoutUnit="SECONDS">
                 <ms-agentforce:variables>
-                    <ms-agentforce:variable name="VerifiedCustomerId" value="#['003Ig00000DsENIIA3']" type="Text"/>
-                    <ms-agentforce:variable name="isVerified" value="#[true]" type="Boolean"/>
+                    <ms-agentforce:variable name="verifiedContactID" value="#['003Ig00000DsENIIA3']" type="Text"/>
                 </ms-agentforce:variables>
             </ms-agentforce:start-agent-conversation>
 
@@ -118,31 +117,35 @@
     <!-- Test 2: Send Message with Variables (Continue Session) -->
     <munit:test name="SendMessageSyncWithVariables_ContinueSession" doc:id="var-test-003">
         <munit:execution>
-            <logger level="INFO" doc:name="Log Test Start" message="Test: Send message with variables in continue session"/>
+            <logger level="INFO" doc:name="Log Test Start" message="Test: Send message with variables in send-message-sync"/>
 
-            <!-- First create session without variables -->
-            <ms-agentforce:start-agent-conversation doc:name="Start agent"
+            <!-- Create session WITH context -->
+            <ms-agentforce:start-agent-conversation doc:name="Start agent WITH context"
                                                      config-ref="Agentforce_Config_New"
                                                      agent="${config.bot-id-new}"
                                                      readTimeout="80"
-                                                     readTimeoutUnit="SECONDS"/>
+                                                     readTimeoutUnit="SECONDS">
+                <ms-agentforce:variables>
+                    <ms-agentforce:variable name="verifiedContactID" value="#['003Ig00000DsEN8IAN']" type="Text"/>
+                </ms-agentforce:variables>
+            </ms-agentforce:start-agent-conversation>
 
             <set-variable value="#[payload.sessionId]" variableName="sessionId" doc:name="Store Session ID"/>
 
-            <!-- Send message WITH variables -->
+            <!-- Send message WITH additional variables in send-message-sync -->
             <ms-agentforce:send-message-sync doc:name="Send message with variables"
                                              config-ref="Agentforce_Config_New"
                                              messageSequenceNumber="1"
                                              readTimeout="80"
                                              readTimeoutUnit="SECONDS">
-                <ms-agentforce:message><![CDATA[Hello, can you help me?]]></ms-agentforce:message>
+                <ms-agentforce:message><![CDATA[Show me my orders]]></ms-agentforce:message>
                 <ms-agentforce:session-id><![CDATA[#[vars.sessionId]]]></ms-agentforce:session-id>
                 <ms-agentforce:variables>
-                    <ms-agentforce:variable name="userContext" value="#['support_request']" type="Text"/>
+                    <ms-agentforce:variable name="filterStatus" value="#['Activated']" type="Text"/>
                 </ms-agentforce:variables>
             </ms-agentforce:send-message-sync>
 
-            <logger level="INFO" doc:name="Log Response" message="#['Response with variables: ' ++ payload.messages[0].message]"/>
+            <logger level="INFO" doc:name="Log Response" message="#['Response: ' ++ payload.messages[0].message]"/>
         </munit:execution>
 
         <munit:validation>
@@ -153,6 +156,10 @@
             <munit-tools:assert-that doc:name="Assert has at least one message"
                                      expression="#[sizeOf(payload.messages)]"
                                      is="#[MunitTools::greaterThan(0)]"/>
+
+            <munit-tools:assert-that doc:name="Assert type is Inform"
+                                     expression="#[payload.messages[0].'type']"
+                                     is="#[MunitTools::equalTo('Inform')]"/>
         </munit:validation>
     </munit:test>
 
