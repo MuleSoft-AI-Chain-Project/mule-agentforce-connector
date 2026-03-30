@@ -69,6 +69,52 @@ output application/json
 		</ms-agentforce:end-agent-conversation>
 	</flow>
 
+	<!-- POST to http://localhost:8081/sendMessageSyncWithVariables with body: { "prompt": "Show me my cases", "contactId": "003Ig00000DsENIIA3" } -->
+	<flow name="send-message-sync-with-variables-demo" doc:id="z1a2b3c4-d5e6-7890-abcd-ef9876543210">
+		<http:listener doc:name="Listener" doc:id="z2b3c4d5-e6f7-8901-bcde-f09876543211"
+					   config-ref="HTTP_Listener_config" path="/sendMessageSyncWithVariables"/>
+		<set-variable value="#[payload.prompt]" doc:name="Set prompt variable"
+					  doc:id="z3c4d5e6-f7a8-9012-cdef-109876543212" variableName="prompt"/>
+		<set-variable value="#[payload.contactId]" doc:name="Set contactId variable"
+					  doc:id="z4d5e6f7-a8b9-0123-def1-209876543213" variableName="contactId"/>
+		<ms-agentforce:start-agent-conversation doc:name="Start agent with context variables"
+			doc:id="z5e6f7a8-b9c0-1234-ef12-309876543214" config-ref="Agentforce_AI_Config"
+			agent="0Xx5b0000008ObjCAE" target="sessionId" targetValue="#[payload.sessionId]">
+			<ms-agentforce:variables>
+				<ms-agentforce:variable name="verifiedContactID" value="#[vars.contactId]" type="Text"/>
+			</ms-agentforce:variables>
+		</ms-agentforce:start-agent-conversation>
+		<logger level="INFO" doc:name="Logger" doc:id="z6f7a8b9-c0d1-2345-f123-409876543215"
+				message="Session with context: #[vars.sessionId], ContactID: #[vars.contactId]"/>
+		<ms-agentforce:send-message-sync doc:name="Send message sync"
+			doc:id="z7a8b9c0-d1e2-3456-1234-509876543216" config-ref="Agentforce_AI_Config"
+			messageSequenceNumber="1">
+			<ms-agentforce:message><![CDATA[#[vars.prompt]]]></ms-agentforce:message>
+			<ms-agentforce:session-id><![CDATA[#[vars.sessionId]]]></ms-agentforce:session-id>
+		</ms-agentforce:send-message-sync>
+		<ee:transform doc:name="Extract Response" doc:id="z8b9c0d1-e2f3-4567-2345-609876543217">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	messageType: payload.messages[0]."type",
+	message: payload.messages[0].message,
+	// With verifiedContactID, agent should directly provide case info
+	// Without it, agent would ask for email verification first
+	contextProvided: true,
+	contactId: vars.contactId
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="z9c0d1e2-f3a4-5678-3456-709876543218"
+				message="Response with context: #[payload]"/>
+		<ms-agentforce:end-agent-conversation doc:name="End agent conversation"
+			doc:id="z0d1e2f3-a4b5-6789-4567-809876543219" config-ref="Agentforce_AI_Config">
+			<ms-agentforce:session-id><![CDATA[#[vars.sessionId]]]></ms-agentforce:session-id>
+		</ms-agentforce:end-agent-conversation>
+	</flow>
+
 	<!-- POST to http://localhost:8081/sendMessageSyncTyped with body: { "prompt": "Your question" } -->
 	<flow name="send-message-sync-typed-demo" doc:id="f2a3b4c5-d6e7-8901-6789-012345678901">
 		<http:listener doc:name="Listener" doc:id="a3b4c5d6-e7f8-9012-7890-123456789012"
