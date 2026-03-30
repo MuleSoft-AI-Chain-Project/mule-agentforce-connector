@@ -1,6 +1,6 @@
 package com.mulesoft.connector.agentforce.internal.botapi.group;
 
-import com.mulesoft.connector.agentforce.internal.botapi.dto.VariableDTO;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.Variable;
 import com.mulesoft.connector.agentforce.internal.botapi.metadata.AgentListValueProvider;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -39,13 +39,13 @@ public class BotAgentParameterGroup {
 
   @Parameter
   @Placement(order = 3)
-  @Expression(value = ExpressionSupport.SUPPORTED)
   @Optional
-  @DisplayName("Variables")
+  @DisplayName("Agent Variables")
+  @Expression(ExpressionSupport.SUPPORTED)
   @Summary("Array of custom and context agent variables ")
-  private List<VariableDTO> variables;
+  private List<Variable> variables;
 
-  public List<VariableDTO> getVariables() {
+  public List<Variable> getVariables() {
     return variables;
   }
 

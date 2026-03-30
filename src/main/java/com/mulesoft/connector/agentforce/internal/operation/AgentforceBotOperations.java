@@ -2,14 +2,16 @@ package com.mulesoft.connector.agentforce.internal.operation;
 
 import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
-import com.mulesoft.connector.agentforce.internal.botapi.dto.VariableDTO;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.Variable;
 import com.mulesoft.connector.agentforce.internal.error.provider.BotErrorTypeProvider;
 import com.mulesoft.connector.agentforce.internal.botapi.group.BotAgentParameterGroup;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.metadata.AgentConversationResponseMetadataResolver;
 import com.mulesoft.connector.agentforce.internal.metadata.SendMessageSyncResponseMetadataResolver;
 import com.mulesoft.connector.agentforce.internal.params.ReadTimeoutParams;
+import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
@@ -94,7 +96,7 @@ public class AgentforceBotOperations {
                               @Content(primary = true) InputStream message,
                               @Content String sessionId,
                               @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
-                              @Optional @Summary("Array of custom and context agent variables ") @DisplayName("Variables") List<VariableDTO> variables,
+                              @Optional @Expression(ExpressionSupport.SUPPORTED) @Summary("Array of custom and context agent variables ") @DisplayName("Agent Variables") List<Variable> variables,
                               @ParameterGroup(
                                   name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, AgentResponseMetadata> callback) {
