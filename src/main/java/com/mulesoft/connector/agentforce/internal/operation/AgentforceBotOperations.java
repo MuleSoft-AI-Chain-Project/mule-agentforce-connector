@@ -2,7 +2,7 @@ package com.mulesoft.connector.agentforce.internal.operation;
 
 import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
-import com.mulesoft.connector.agentforce.internal.botapi.dto.Variable;
+import com.mulesoft.connector.agentforce.api.request.Variable;
 import com.mulesoft.connector.agentforce.internal.error.provider.BotErrorTypeProvider;
 import com.mulesoft.connector.agentforce.internal.botapi.group.BotAgentParameterGroup;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;

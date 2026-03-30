@@ -1,6 +1,6 @@
 package com.mulesoft.connector.agentforce.internal.botapi.group;
 
-import com.mulesoft.connector.agentforce.internal.botapi.dto.Variable;
+import com.mulesoft.connector.agentforce.api.request.Variable;
 import com.mulesoft.connector.agentforce.internal.botapi.metadata.AgentListValueProvider;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;

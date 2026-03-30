@@ -1,4 +1,4 @@
-package com.mulesoft.connector.agentforce.internal.botapi.dto;
+package com.mulesoft.connector.agentforce.api.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mule.runtime.extension.api.annotation.param.Parameter;

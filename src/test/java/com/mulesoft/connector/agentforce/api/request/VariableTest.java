@@ -1,4 +1,4 @@
-package com.mulesoft.connector.agentforce.internal.botapi.dto;
+package com.mulesoft.connector.agentforce.api.request;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

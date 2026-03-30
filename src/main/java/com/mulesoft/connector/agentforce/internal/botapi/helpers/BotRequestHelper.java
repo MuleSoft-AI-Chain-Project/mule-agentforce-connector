@@ -12,7 +12,7 @@ import com.mulesoft.connector.agentforce.internal.botapi.dto.BotRecord;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotSessionRequestDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentApiResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.InstanceConfigDTO;
-import com.mulesoft.connector.agentforce.internal.botapi.dto.Variable;
+import com.mulesoft.connector.agentforce.api.request.Variable;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.VariableDTO;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
