@@ -2,17 +2,25 @@ package com.mulesoft.connector.agentforce.internal.botapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class BotContinueSessionRequestDTO {
 
   private final Message message;
+  private final List<VariableDTO> variables;
 
-  public BotContinueSessionRequestDTO(Message message) {
+  public BotContinueSessionRequestDTO(Message message, List<VariableDTO> variables) {
     this.message = message;
+    this.variables = variables;
   }
 
   public Message getMessage() {
     return message;
+  }
+
+  public List<VariableDTO> getVariables() {
+    return variables;
   }
 
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
