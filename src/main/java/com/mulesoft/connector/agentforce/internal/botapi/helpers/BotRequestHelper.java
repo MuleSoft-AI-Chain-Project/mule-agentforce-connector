@@ -203,7 +203,7 @@ public class BotRequestHelper {
   }
 
   private List<VariableDTO> convertToVariableDTOs(List<Variable> variables) {
-    if (variables == null || variables.isEmpty()) {
+    if (variables.isEmpty()) {
       return null;
     }
 
@@ -448,19 +448,19 @@ public class BotRequestHelper {
 
   private AgentBusinessDataResponseDTO.BusinessDataMessage convertToBusinessDataMessage(
                                                                                         AgentApiResponseDTO.Message msg) {
-    AgentBusinessDataResponseDTO.BusinessDataMessage businessMsg =
-        new AgentBusinessDataResponseDTO.BusinessDataMessage(msg.getType());
+    AgentBusinessDataResponseDTO.BusinessDataMessage.Builder builder =
+        new AgentBusinessDataResponseDTO.BusinessDataMessage.Builder(msg.getType());
 
     MessageTypeHandler handler = MessageTypeHandler.fromTypeName(msg.getType());
 
     if (handler != null) {
-      handler.apply(msg, businessMsg);
+      handler.apply(msg, builder);
     } else {
       log.warn("Unknown message type: {}", msg.getType());
-      businessMsg.setMessage(msg.getMessage());
+      builder.message(msg.getMessage());
     }
 
-    return businessMsg;
+    return builder.build();
   }
 
   AgentResponseMetadata buildMetadata(AgentApiResponseDTO apiResponse) {
@@ -478,8 +478,9 @@ public class BotRequestHelper {
 
   private AgentResponseMetadata.MessageMetadata convertToMessageMetadata(AgentApiResponseDTO.Message msg) {
     return new AgentResponseMetadata.MessageMetadata(msg.getId(), msg.getType(), msg.getFeedbackId(), msg.getPlanId(),
-                                                     msg.getIsContentSafe(), msg.getMetrics(), msg.getHttpStatus(),
-                                                     msg.getTimestamp(), msg.getExpected(), msg.getTraceId());
+                                                     Boolean.TRUE.equals(msg.getIsContentSafe()), msg.getMetrics(),
+                                                     msg.getHttpStatus(), msg.getTimestamp(),
+                                                     Boolean.TRUE.equals(msg.getExpected()), msg.getTraceId());
   }
 
   private AgentResponseMetadata.Links convertLinks(AgentApiResponseDTO.Links source) {

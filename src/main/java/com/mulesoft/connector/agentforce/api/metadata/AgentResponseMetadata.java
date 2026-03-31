@@ -54,19 +54,19 @@ public class AgentResponseMetadata implements Serializable {
     private String type;
     private String feedbackId;
     private String planId;
-    private Boolean isContentSafe;
+    private boolean isContentSafe;
     private Map<String, Object> metrics;
 
     // Error metadata
     private Integer httpStatus;
     private Long timestamp;
-    private Boolean expected;
+    private boolean expected;
     private String traceId;
 
     public MessageMetadata() {}
 
-    public MessageMetadata(String id, String type, String feedbackId, String planId, Boolean isContentSafe,
-                           Map<String, Object> metrics, Integer httpStatus, Long timestamp, Boolean expected,
+    public MessageMetadata(String id, String type, String feedbackId, String planId, boolean isContentSafe,
+                           Map<String, Object> metrics, Integer httpStatus, Long timestamp, boolean expected,
                            String traceId) {
       this.id = id;
       this.type = type;
@@ -96,7 +96,7 @@ public class AgentResponseMetadata implements Serializable {
       return planId;
     }
 
-    public Boolean getIsContentSafe() {
+    public boolean getIsContentSafe() {
       return isContentSafe;
     }
 
@@ -112,7 +112,7 @@ public class AgentResponseMetadata implements Serializable {
       return timestamp;
     }
 
-    public Boolean getExpected() {
+    public boolean getExpected() {
       return expected;
     }
 
