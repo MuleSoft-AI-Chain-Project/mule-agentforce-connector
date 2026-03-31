@@ -12,6 +12,7 @@ import com.mulesoft.connector.agentforce.internal.botapi.dto.BotRecord;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotSessionRequestDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentApiResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.InstanceConfigDTO;
+import com.mulesoft.connector.agentforce.api.request.Variable;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.VariableDTO;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
@@ -103,7 +104,7 @@ public class BotRequestHelper {
   }
 
 
-  public void startSession(String agentId, boolean byPassUser, List<VariableDTO> variables,
+  public void startSession(String agentId, boolean byPassUser, List<Variable> variables,
                            ReadTimeoutParams readTimeout,
                            CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
@@ -112,7 +113,8 @@ public class BotRequestHelper {
         + agentId + URI_BOT_API_SESSIONS;
     String externalSessionKey = UUID.randomUUID().toString();
     String endpoint = agentforceConnection.getSalesforceOrgUrl();
-    BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser, variables);
+    BotSessionRequestDTO payload =
+        createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser, variables);
 
     log.debug("Agentforce start session details. Request URL: {}, external Session Key:{}," +
         " endpoint: {}", startSessionUrl, externalSessionKey, endpoint);
@@ -145,7 +147,7 @@ public class BotRequestHelper {
   }
 
   public void sendMessageSync(InputStream message, String sessionId, int messageSequenceNumber,
-                              List<VariableDTO> variables, ReadTimeoutParams readTimeout,
+                              List<Variable> variables, ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, AgentResponseMetadata> callback)
       throws IOException {
 
@@ -179,23 +181,35 @@ public class BotRequestHelper {
   private BotSessionRequestDTO createStartSessionRequestPayload(String externalSessionKey,
                                                                 String endpoint,
                                                                 boolean byPassUser,
-                                                                List<VariableDTO> variables) {
+                                                                List<Variable> variables) {
 
     InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
     instanceConfigDTO.setEndpoint(endpoint);
-    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser, variables);
+    List<VariableDTO> variableDTOs = convertToVariableDTOs(variables);
+    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser, variableDTOs);
   }
 
   private BotContinueSessionRequestDTO createContinueSessionRequestPayload(String message,
                                                                            int messageSequenceNumber,
-                                                                           List<VariableDTO> variables) {
+                                                                           List<Variable> variables) {
 
     BotContinueSessionRequestDTO.Message messageDTO = new BotContinueSessionRequestDTO.Message();
     messageDTO.setText(message);
     messageDTO.setSequenceId(messageSequenceNumber);
     messageDTO.setType(CONTINUE_SESSION_MESSAGE_TYPE_TEXT);
 
-    return new BotContinueSessionRequestDTO(messageDTO, variables);
+    List<VariableDTO> variableDTOs = convertToVariableDTOs(variables);
+    return new BotContinueSessionRequestDTO(messageDTO, variableDTOs);
+  }
+
+  private List<VariableDTO> convertToVariableDTOs(List<Variable> variables) {
+    if (variables == null || variables.isEmpty()) {
+      return null;
+    }
+
+    return variables.stream()
+        .map(v -> new VariableDTO(v.getName(), v.getValue(), v.getType()))
+        .collect(Collectors.toList());
   }
 
   private MultiMap<String, String> addConnectionHeaders(String accessToken) {
