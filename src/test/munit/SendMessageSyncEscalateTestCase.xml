@@ -33,33 +33,46 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
             <logger level="INFO" doc:name="Log Response" message="#['Messages count: ' ++ sizeOf(payload.messages) ++ ', First type: ' ++ payload.messages[0].'type' ++ (if (sizeOf(payload.messages) > 1) ', Second type: ' ++ payload.messages[1].'type' else '')]"/>
         </munit:execution>
         <munit:validation >
-            <!-- Validate payload structure -->
+            <!-- Validate payload structure - response can be 1 message (Escalate) or 2 messages (Inform + Escalate) -->
             <munit-tools:assert-that doc:name="Assert payload.messages exists"
                                      expression="#[payload.messages]"
                                      is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert has 1 message (Escalate)"
+            <munit-tools:assert-that doc:name="Assert has at least 1 message"
                                      expression="#[sizeOf(payload.messages)]"
-                                     is="#[MunitTools::equalTo(1)]"/>
-            <!-- Validate payload - business data only -->
-            <munit-tools:assert-that doc:name="Assert message type is Escalate"
-                                     expression="#[payload.messages[0].'type']"
+                                     is="#[MunitTools::greaterThanOrEqualTo(1)]"/>
+
+            <!-- The last message should always be Escalate -->
+            <munit-tools:assert-that doc:name="Assert last message type is Escalate"
+                                     expression="#[payload.messages[-1].'type']"
                                      is="#[MunitTools::equalTo('Escalate')]"/>
-            <munit-tools:assert-that doc:name="Assert targets field is present"
-                                     expression="#[payload.messages[0].targets?]"
+            <munit-tools:assert-that doc:name="Assert Escalate targets field is present"
+                                     expression="#[payload.messages[-1].targets?]"
                                      is="#[MunitTools::equalTo(true)]"/>
+
+            <!-- If there are 2 messages, first should be Inform -->
+            <choice>
+                <when expression="#[sizeOf(payload.messages) == 2]">
+                    <munit-tools:assert-that doc:name="Assert first message is Inform"
+                                             expression="#[payload.messages[0].'type']"
+                                             is="#[MunitTools::equalTo('Inform')]"/>
+                </when>
+            </choice>
 
             <!-- Validate attributes structure -->
             <munit-tools:assert-that doc:name="Assert attributes exist"
                                      expression="#[attributes]"
                                      is="#[MunitTools::notNullValue()]"/>
-            <munit-tools:assert-that doc:name="Assert messagesMetadata has 1 element"
+            <munit-tools:assert-that doc:name="Assert messagesMetadata exists"
+                                     expression="#[attributes.messagesMetadata]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messagesMetadata has at least 1 element"
                                      expression="#[sizeOf(attributes.messagesMetadata)]"
-                                     is="#[MunitTools::equalTo(1)]"/>
-            <munit-tools:assert-that doc:name="Assert metadata type is Escalate"
-                                     expression="#[attributes.messagesMetadata[0].'type']"
+                                     is="#[MunitTools::greaterThanOrEqualTo(1)]"/>
+            <munit-tools:assert-that doc:name="Assert last metadata type is Escalate"
+                                     expression="#[attributes.messagesMetadata[-1].'type']"
                                      is="#[MunitTools::equalTo('Escalate')]"/>
             <munit-tools:assert-that doc:name="Assert metadata id exists"
-                                     expression="#[attributes.messagesMetadata[0].id]"
+                                     expression="#[attributes.messagesMetadata[-1].id]"
                                      is="#[MunitTools::notNullValue()]"/>
             <munit-tools:assert-that doc:name="Assert links exist"
                                      expression="#[attributes.links]"
