@@ -4,6 +4,7 @@ import com.mulesoft.connector.agentforce.api.request.Variable;
 import com.mulesoft.connector.agentforce.internal.botapi.metadata.AgentListValueProvider;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -42,6 +43,7 @@ public class BotAgentParameterGroup {
   @Parameter
   @Placement(order = 3)
   @Optional
+  @NullSafe
   @DisplayName("Agent Variables")
   @Expression(ExpressionSupport.SUPPORTED)
   @Summary("Array of custom and context agent variables ")

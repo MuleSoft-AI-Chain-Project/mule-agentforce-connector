@@ -10,47 +10,31 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
 
     <munit:config name="SendMessageSyncFailureTestCase.xml"/>
 
-    <!-- Test Case 22: Failure - Method 2 - Post-escalation message triggers Failure (session locked) -->
-    <!--<munit:test name="SendMessageSync_FailureType_PostEscalation" doc:id="test-case-022" >
+    <munit:before-test name="SendMessageSyncFailure_Before_Test" doc:id="be3f67e1-e8d7-4d88-963a-81057974c9d8" >
+        <ms-agentforce:start-agent-conversation agent="${config.bot-id-failure-type}" doc:name="Start agent" doc:id="9b81ccfe-df4d-4e58-bf0a-75eec9fe3680" config-ref="Agentforce_Config_New" readTimeout="80" readTimeoutUnit="SECONDS"/>
+        <set-variable value="#[output application/java&#10;---&#10;payload.sessionId]" doc:name="Set sessionId variable" doc:id="a81d4da9-331b-40fc-9cd4-e7930570d781" variableName="sessId" />
+        <logger level="INFO" doc:name="Log sessionId" doc:id="301239c9-3db7-4896-84e8-3febe24636d0" message="#['Session ID: ' ++ vars.sessId]"/>
+    </munit:before-test>
+
+    <!-- Failure - Empty string message triggers Failure -->
+    <munit:test name="SendMessageSync_FailureType_EmptyString" doc:id="test-case-022" >
         <munit:execution >
-            <logger level="INFO" doc:name="Log Test Start" message="Test Case 22: Message after escalation triggers Failure (session locked)"/>
+            <logger level="INFO" doc:name="Log Test Start" message="Empty string message triggers Failure"/>
 
-            &lt;!&ndash; Create a fresh session for this test &ndash;&gt;
-            <ms-agentforce:start-agent-conversation doc:name="Start agent"
-                                                     config-ref="Agentforce_Config_New"
-                                                     agent="${config.bot-id-new}"
-                                                     readTimeout="80"
-                                                     readTimeoutUnit="SECONDS"/>
-            <set-variable value="#[payload.sessionId]" variableName="failureTestSessionId" doc:name="Store Session ID"/>
-            <logger level="INFO" doc:name="Log Session" message="#['Session created: ' ++ vars.failureTestSessionId]"/>
-
-            &lt;!&ndash; Step 1: Trigger escalation first &ndash;&gt;
-            <ms-agentforce:send-message-sync doc:name="Request human agent (triggers escalation)"
+            <ms-agentforce:send-message-sync doc:name="Send empty string (triggers Failure)"
                                              config-ref="Agentforce_Config_New"
                                              messageSequenceNumber="1"
                                              readTimeout="80"
                                              readTimeoutUnit="SECONDS">
-                <ms-agentforce:message><![CDATA[I want to speak to a human agent]]></ms-agentforce:message>
-                <ms-agentforce:session-id><![CDATA[#[vars.failureTestSessionId]]]></ms-agentforce:session-id>
+                <ms-agentforce:message><![CDATA[]]></ms-agentforce:message>
+                <ms-agentforce:session-id><![CDATA[#[vars.sessId]]]></ms-agentforce:session-id>
             </ms-agentforce:send-message-sync>
 
-            <logger level="INFO" doc:name="Log Escalation" message="#['Escalation response - Message count: ' ++ sizeOf(payload.messages) ++ ', First type: ' ++ payload.messages[0].'type']"/>
-
-            &lt;!&ndash; Step 2: Try to send another message after escalation (should fail - session locked) &ndash;&gt;
-            <ms-agentforce:send-message-sync doc:name="Send message after escalation"
-                                             config-ref="Agentforce_Config_New"
-                                             messageSequenceNumber="2"
-                                             readTimeout="80"
-                                             readTimeoutUnit="SECONDS">
-                <ms-agentforce:message><![CDATA[Can you help me with something else?]]></ms-agentforce:message>
-                <ms-agentforce:session-id><![CDATA[#[vars.failureTestSessionId]]]></ms-agentforce:session-id>
-            </ms-agentforce:send-message-sync>
-
-            <logger level="INFO" doc:name="Log Response" message="#['Second response - Type: ' ++ payload.messages[0].'type' ++ (if (payload.messages[0].code != null) ', Code: ' ++ payload.messages[0].code else '')]"/>
+            <logger level="INFO" doc:name="Log Response" message="#['Response - Type: ' ++ payload.messages[0].'type' ++ (if (payload.messages[0].code != null) ', Code: ' ++ payload.messages[0].code else '')]"/>
         </munit:execution>
         <munit:validation >
-            &lt;!&ndash; Validate payload structure &ndash;&gt;
-            <munit-tools:assert-that doc:name="Assert payload exists"
+            <!-- Validate payload structure -->
+            <munit-tools:assert-that doc:name="Assert payload.messages exists"
                                      expression="#[payload.messages]"
                                      is="#[MunitTools::notNullValue()]"/>
             <munit-tools:assert-that doc:name="Assert has 1 message"
@@ -66,7 +50,7 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
                                      expression="#[payload.messages[0].errors]"
                                      is="#[MunitTools::notNullValue()]"/>
 
-            &lt;!&ndash; Validate attributes structure &ndash;&gt;
+            <!-- Validate attributes structure -->
             <munit-tools:assert-that doc:name="Assert attributes exist"
                                      expression="#[attributes]"
                                      is="#[MunitTools::notNullValue()]"/>
@@ -80,5 +64,11 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
                                      expression="#[attributes.links]"
                                      is="#[MunitTools::notNullValue()]"/>
         </munit:validation>
-    </munit:test>-->
+    </munit:test>
+
+    <munit:after-test name="SendMessageSyncFailure_After_Test" doc:id="a18aeb95-427d-4bc9-816d-d68c803ed5d7" >
+        <ms-agentforce:end-agent-conversation doc:name="End agent conversation" doc:id="003b5bf5-6baa-4540-9529-148e50e256ed" config-ref="Agentforce_Config_New" readTimeout="90" readTimeoutUnit="SECONDS">
+            <ms-agentforce:session-id ><![CDATA[#[vars.sessId]]]></ms-agentforce:session-id>
+        </ms-agentforce:end-agent-conversation>
+    </munit:after-test>
 </mule>
