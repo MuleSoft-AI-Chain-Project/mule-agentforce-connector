@@ -19,9 +19,11 @@ import org.mule.runtime.extension.api.annotation.metadata.fixed.OutputJsonType;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.exception.ModuleException;
@@ -70,8 +72,8 @@ public class AgentforceBotOperations {
   @Summary("DEPRECATED: Use Send-message-sync for structured JSON response. Continue an agent conversation (returns plain text)")
   public void continueConversation(@Connection AgentforceConnection connection,
                                    @Content(primary = true) InputStream message,
-                                   @Content String sessionId,
-                                   @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
+                                   @Content @Example("3bb7c7e8-1234-5678-9abc-def012345678") String sessionId,
+                                   @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") @Example("1") int messageSequenceNumber,
                                    @ParameterGroup(
                                        name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                                    CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback) {
@@ -95,9 +97,9 @@ public class AgentforceBotOperations {
   @DisplayName("Send Message (Sync)")
   public void sendMessageSync(@Connection AgentforceConnection connection,
                               @Content(primary = true) InputStream message,
-                              @Content String sessionId,
-                              @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") int messageSequenceNumber,
-                              @Optional @Expression(ExpressionSupport.SUPPORTED) @Summary("Array of custom and context agent variables ") @DisplayName("Agent Variables") List<Variable> variables,
+                              @Content @Example("3bb7c7e8-1234-5678-9abc-def012345678") String sessionId,
+                              @Summary("Increase this number for each subsequent message in a session") @DisplayName("Message Sequence Number") @Example("1") int messageSequenceNumber,
+                              @Optional @NullSafe @Expression(ExpressionSupport.SUPPORTED) @Summary("Array of custom and context agent variables ") @DisplayName("Agent Variables") List<Variable> variables,
                               @ParameterGroup(
                                   name = ReadTimeoutParams.READ_TIMEOUT_LABEL) @Summary("If defined, it overwrites values in configuration.") ReadTimeoutParams readTimeout,
                               CompletionCallback<InputStream, AgentResponseMetadata> callback) {

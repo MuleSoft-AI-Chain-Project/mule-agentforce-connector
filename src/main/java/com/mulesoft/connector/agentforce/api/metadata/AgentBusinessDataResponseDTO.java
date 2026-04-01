@@ -37,37 +37,48 @@ public class AgentBusinessDataResponseDTO {
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public static class BusinessDataMessage {
 
-    private String type;
-    private String message;
+    private final String type;
+    private final String message;
 
     // Inform fields
-    private List<Map<String, Object>> result;
-    private List<Map<String, Object>> citedReferences;
+    private final List<Map<String, Object>> result;
+    private final List<Map<String, Object>> citedReferences;
 
     // Inquire fields
-    private List<Collect> collect;
+    private final List<Collect> collect;
 
     // Confirm fields
-    private List<Map<String, Object>> confirm;
+    private final List<Map<String, Object>> confirm;
 
     // Failure fields
-    private String code;
-    private List<Object> errors;
+    private final String code;
+    private final List<Object> errors;
 
     // SessionEnded fields
-    private String reason;
+    private final String reason;
 
     // ProgressIndicator fields
-    private String indicatorType;
+    private final String indicatorType;
 
     // Escalate fields
-    private List<Map<String, Object>> targets;
+    private final List<Map<String, Object>> targets;
 
     // Error fields
-    private String error;
+    private final String error;
 
-    public BusinessDataMessage(String type) {
-      this.type = type;
+    private BusinessDataMessage(Builder builder) {
+      this.type = builder.type;
+      this.message = builder.message;
+      this.result = builder.result;
+      this.citedReferences = builder.citedReferences;
+      this.collect = builder.collect;
+      this.confirm = builder.confirm;
+      this.code = builder.code;
+      this.errors = builder.errors;
+      this.reason = builder.reason;
+      this.indicatorType = builder.indicatorType;
+      this.targets = builder.targets;
+      this.error = builder.error;
     }
 
     public String getType() {
@@ -78,88 +89,123 @@ public class AgentBusinessDataResponseDTO {
       return message;
     }
 
-    public void setMessage(String message) {
-      this.message = message;
-    }
-
     public List<Map<String, Object>> getResult() {
       return result;
-    }
-
-    public void setResult(List<Map<String, Object>> result) {
-      this.result = result;
     }
 
     public List<Map<String, Object>> getCitedReferences() {
       return citedReferences;
     }
 
-    public void setCitedReferences(List<Map<String, Object>> citedReferences) {
-      this.citedReferences = citedReferences;
-    }
-
     public List<Collect> getCollect() {
       return collect;
-    }
-
-    public void setCollect(List<Collect> collect) {
-      this.collect = collect;
     }
 
     public List<Map<String, Object>> getConfirm() {
       return confirm;
     }
 
-    public void setConfirm(List<Map<String, Object>> confirm) {
-      this.confirm = confirm;
-    }
-
     public String getCode() {
       return code;
-    }
-
-    public void setCode(String code) {
-      this.code = code;
     }
 
     public List<Object> getErrors() {
       return errors;
     }
 
-    public void setErrors(List<Object> errors) {
-      this.errors = errors;
-    }
-
     public String getReason() {
       return reason;
-    }
-
-    public void setReason(String reason) {
-      this.reason = reason;
     }
 
     public String getIndicatorType() {
       return indicatorType;
     }
 
-    public void setIndicatorType(String indicatorType) {
-      this.indicatorType = indicatorType;
-    }
-
     public List<Map<String, Object>> getTargets() {
       return targets;
-    }
-
-    public void setTargets(List<Map<String, Object>> targets) {
-      this.targets = targets;
     }
 
     public String getError() {
       return error;
     }
 
-    public void setError(String error) {
-      this.error = error;
+    public static class Builder {
+
+      private String type;
+      private String message;
+      private List<Map<String, Object>> result;
+      private List<Map<String, Object>> citedReferences;
+      private List<Collect> collect;
+      private List<Map<String, Object>> confirm;
+      private String code;
+      private List<Object> errors;
+      private String reason;
+      private String indicatorType;
+      private List<Map<String, Object>> targets;
+      private String error;
+
+      public Builder(String type) {
+        this.type = type;
+      }
+
+      public Builder message(String message) {
+        this.message = message;
+        return this;
+      }
+
+      public Builder result(List<Map<String, Object>> result) {
+        this.result = result;
+        return this;
+      }
+
+      public Builder citedReferences(List<Map<String, Object>> citedReferences) {
+        this.citedReferences = citedReferences;
+        return this;
+      }
+
+      public Builder collect(List<Collect> collect) {
+        this.collect = collect;
+        return this;
+      }
+
+      public Builder confirm(List<Map<String, Object>> confirm) {
+        this.confirm = confirm;
+        return this;
+      }
+
+      public Builder code(String code) {
+        this.code = code;
+        return this;
+      }
+
+      public Builder errors(List<Object> errors) {
+        this.errors = errors;
+        return this;
+      }
+
+      public Builder reason(String reason) {
+        this.reason = reason;
+        return this;
+      }
+
+      public Builder indicatorType(String indicatorType) {
+        this.indicatorType = indicatorType;
+        return this;
+      }
+
+      public Builder targets(List<Map<String, Object>> targets) {
+        this.targets = targets;
+        return this;
+      }
+
+      public Builder error(String error) {
+        this.error = error;
+        return this;
+      }
+
+      public BusinessDataMessage build() {
+        return new BusinessDataMessage(this);
+      }
     }
 
     @Override

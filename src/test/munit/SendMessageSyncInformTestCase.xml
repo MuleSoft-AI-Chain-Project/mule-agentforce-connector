@@ -16,10 +16,10 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
         <logger level="INFO" doc:name="Log sessionId" doc:id="301239c9-3db7-4896-84e8-3febe24636c5" message="#['Session ID: ' ++ vars.sessId]"/>
     </munit:before-test>
 
-    <!-- Test Case 1: Inform - General FAQ (Knowledge Article response) -->
+    <!-- Inform - General FAQ (Knowledge Article response) -->
     <munit:test name="SendMessageSync_InformType_KnowledgeArticle" doc:id="test-case-001" >
         <munit:execution >
-            <logger level="INFO" doc:name="Log Test Start" message="Test Case 1: General FAQ triggers Inform with knowledge article"/>
+            <logger level="INFO" doc:name="Log Test Start" message="General FAQ triggers Inform with knowledge article"/>
 
             <ms-agentforce:send-message-sync doc:name="Ask about return policy"
                                              config-ref="Agentforce_Config_New"

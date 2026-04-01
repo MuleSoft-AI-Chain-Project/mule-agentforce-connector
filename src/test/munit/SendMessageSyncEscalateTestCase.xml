@@ -16,10 +16,10 @@ http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema
         <logger level="INFO" doc:name="Log sessionId" doc:id="301239c9-3db7-4896-84e8-3febe24636d0" message="#['Session ID: ' ++ vars.sessId]"/>
     </munit:before-test>
 
-    <!-- Test Cases 19-20: Escalate - Request human agent (returns Inform + Escalate) -->
+    <!-- Escalate - Request human agent (returns Inform + Escalate) -->
     <munit:test name="SendMessageSync_EscalateType_HumanAgentRequest" doc:id="test-case-019-020" >
         <munit:execution >
-            <logger level="INFO" doc:name="Log Test Start" message="Test Cases 19-20: Request human agent triggers Escalate"/>
+            <logger level="INFO" doc:name="Log Test Start" message="Request human agent triggers Escalate"/>
 
             <ms-agentforce:send-message-sync doc:name="Request human agent"
                                              config-ref="Agentforce_Config_New"
