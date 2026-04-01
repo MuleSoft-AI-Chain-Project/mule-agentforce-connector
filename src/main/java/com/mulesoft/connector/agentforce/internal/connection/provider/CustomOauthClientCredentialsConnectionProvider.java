@@ -3,7 +3,7 @@ package com.mulesoft.connector.agentforce.internal.connection.provider;
 import com.mulesoft.connector.agentforce.internal.connection.provider.param.AgentforceConnectionParameterGroup;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.connection.CustomOAuthClientCredentialsConnection;
-import com.mulesoft.connector.agentforce.internal.proxy.HttpProxyConfig;
+import com.mulesoft.connector.agentforce.api.proxy.HttpProxyConfig;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
