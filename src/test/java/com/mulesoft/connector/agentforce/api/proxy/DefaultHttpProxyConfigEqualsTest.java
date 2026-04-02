@@ -1,4 +1,4 @@
-package com.mulesoft.connector.agentforce.internal.proxy;
+package com.mulesoft.connector.agentforce.api.proxy;
 
 import org.junit.jupiter.api.Test;
 

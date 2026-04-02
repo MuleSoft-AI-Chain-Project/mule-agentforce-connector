@@ -1,0 +1,39 @@
+{
+  "messages": [
+    {
+      "type": "Confirm",
+      "feedbackId": "041a561f-bef6-4af6-9bea-308cfa647a99",
+      "confirm": [
+        {
+          "type": "copilotActionInput/CreateUpdatePromotionUsingAccrualTemplate_179J9000000wm0N",
+          "value": {
+            "promotionName": "Energy Efficiency Rewards Programme",
+            "startDate": "2026-01-14",
+            "loyaltyProgram": "Energy Efficiency Rewards"
+          },
+          "property": ""
+        }
+      ],
+      "id": "18b99269-4bb2-4f62-a5de-90a76aab0288",
+      "metrics": {},
+      "planId": "041a561f-bef6-4af6-9bea-308cfa647a99",
+      "isContentSafe": true,
+      "message": "Can I proceed with creating a promotion for the Energy Efficiency Rewards Programme starting on January 14, 2026?"
+    }
+  ],
+  "_links": {
+    "self": null,
+    "messages": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages"
+    },
+    "messagesStream": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages/stream"
+    },
+    "session": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/agents/0XxJ9000000si5iKAA/sessions"
+    },
+    "end": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+
+    <munit:config name="SendMessageSyncEscalateTestCase.xml"/>
+
+    <munit:before-test name="SendMessageSyncEscalate_Before_Test" doc:id="be3f67e1-e8d7-4d88-963a-81057974c9d8" >
+        <ms-agentforce:start-agent-conversation agent="${config.bot-id-new}" doc:name="Start agent" doc:id="9b81ccfe-df4d-4e58-bf0a-75eec9fe3680" config-ref="Agentforce_Config_New" readTimeout="80" readTimeoutUnit="SECONDS"/>
+        <set-variable value="#[output application/java&#10;---&#10;payload.sessionId]" doc:name="Set sessionId variable" doc:id="a81d4da9-331b-40fc-9cd4-e7930570d781" variableName="sessId" />
+        <logger level="INFO" doc:name="Log sessionId" doc:id="301239c9-3db7-4896-84e8-3febe24636d0" message="#['Session ID: ' ++ vars.sessId]"/>
+    </munit:before-test>
+
+    <!-- Escalate - Request human agent (returns Inform + Escalate) -->
+    <munit:test name="SendMessageSync_EscalateType_HumanAgentRequest" doc:id="test-case-019-020" >
+        <munit:execution >
+            <logger level="INFO" doc:name="Log Test Start" message="Request human agent triggers Escalate"/>
+
+            <ms-agentforce:send-message-sync doc:name="Request human agent"
+                                             config-ref="Agentforce_Config_New"
+                                             messageSequenceNumber="1"
+                                             readTimeout="80"
+                                             readTimeoutUnit="SECONDS">
+                <ms-agentforce:message><![CDATA[I want to speak to a human agent]]></ms-agentforce:message>
+                <ms-agentforce:session-id><![CDATA[#[vars.sessId]]]></ms-agentforce:session-id>
+            </ms-agentforce:send-message-sync>
+
+            <logger level="INFO" doc:name="Log Response" message="#['Messages count: ' ++ sizeOf(payload.messages) ++ ', First type: ' ++ payload.messages[0].'type' ++ (if (sizeOf(payload.messages) > 1) ', Second type: ' ++ payload.messages[1].'type' else '')]"/>
+        </munit:execution>
+        <munit:validation >
+            <!-- Validate payload structure - response can be 1 message (Escalate) or 2 messages (Inform + Escalate) -->
+            <munit-tools:assert-that doc:name="Assert payload.messages exists"
+                                     expression="#[payload.messages]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert has at least 1 message"
+                                     expression="#[sizeOf(payload.messages)]"
+                                     is="#[MunitTools::greaterThanOrEqualTo(1)]"/>
+
+            <!-- The last message should always be Escalate -->
+            <munit-tools:assert-that doc:name="Assert last message type is Escalate"
+                                     expression="#[payload.messages[-1].'type']"
+                                     is="#[MunitTools::equalTo('Escalate')]"/>
+            <munit-tools:assert-that doc:name="Assert Escalate targets field is present"
+                                     expression="#[payload.messages[-1].targets?]"
+                                     is="#[MunitTools::equalTo(true)]"/>
+
+            <!-- If there are 2 messages, first should be Inform -->
+            <choice>
+                <when expression="#[sizeOf(payload.messages) == 2]">
+                    <munit-tools:assert-that doc:name="Assert first message is Inform"
+                                             expression="#[payload.messages[0].'type']"
+                                             is="#[MunitTools::equalTo('Inform')]"/>
+                </when>
+            </choice>
+
+            <!-- Validate attributes structure -->
+            <munit-tools:assert-that doc:name="Assert attributes exist"
+                                     expression="#[attributes]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messagesMetadata exists"
+                                     expression="#[attributes.messagesMetadata]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messagesMetadata has at least 1 element"
+                                     expression="#[sizeOf(attributes.messagesMetadata)]"
+                                     is="#[MunitTools::greaterThanOrEqualTo(1)]"/>
+            <munit-tools:assert-that doc:name="Assert last metadata type is Escalate"
+                                     expression="#[attributes.messagesMetadata[-1].'type']"
+                                     is="#[MunitTools::equalTo('Escalate')]"/>
+            <munit-tools:assert-that doc:name="Assert metadata id exists"
+                                     expression="#[attributes.messagesMetadata[-1].id]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert links exist"
+                                     expression="#[attributes.links]"
+                                     is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:after-test name="SendMessageSyncEscalate_After_Test" doc:id="a18aeb95-427d-4bc9-816d-d68c803ed5d7" >
+        <ms-agentforce:end-agent-conversation doc:name="End agent conversation" doc:id="003b5bf5-6baa-4540-9529-148e50e256ed" config-ref="Agentforce_Config_New" readTimeout="90" readTimeoutUnit="SECONDS">
+            <ms-agentforce:session-id ><![CDATA[#[vars.sessId]]]></ms-agentforce:session-id>
+        </ms-agentforce:end-agent-conversation>
+    </munit:after-test>
+</mule>

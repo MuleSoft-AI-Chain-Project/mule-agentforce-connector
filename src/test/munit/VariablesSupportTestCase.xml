@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+
+    <munit:config name="VariablesSupportTestCase.xml"/>
+
+    <!-- Test 1: Comparison - Variables Feature Demonstration (With vs Without) -->
+    <munit:test name="VariablesComparison_WithoutVsWithVerification" doc:id="var-test-001">
+        <munit:execution>
+            <logger level="INFO" doc:name="Log Test Start" message="Test: Comparison of agent behavior WITHOUT vs WITH variables"/>
+
+            <!-- SCENARIO 1: WITHOUT Variables - Agent should ask for verification -->
+            <logger level="INFO" doc:name="Log Scenario 1" message="=== SCENARIO 1: Start session WITHOUT variables ==="/>
+            <ms-agentforce:start-agent-conversation doc:name="Start agent WITHOUT variables"
+                                                     config-ref="Agentforce_Config_New"
+                                                     agent="${config.bot-id-new}"
+                                                     readTimeout="80"
+                                                     readTimeoutUnit="SECONDS"/>
+
+            <set-variable value="#[payload.sessionId]" variableName="sessionId1" doc:name="Store Session ID 1"/>
+            <logger level="INFO" doc:name="Log Session 1" message="#['Session 1 (no variables) created: ' ++ vars.sessionId1]"/>
+
+            <ms-agentforce:send-message-sync doc:name="Ask about cases (no context)"
+                                             config-ref="Agentforce_Config_New"
+                                             messageSequenceNumber="1"
+                                             readTimeout="80"
+                                             readTimeoutUnit="SECONDS">
+                <ms-agentforce:message><![CDATA[I would like to check on my cases]]></ms-agentforce:message>
+                <ms-agentforce:session-id><![CDATA[#[vars.sessionId1]]]></ms-agentforce:session-id>
+            </ms-agentforce:send-message-sync>
+
+            <set-variable value="#[payload]" variableName="responseWithoutVariables" doc:name="Store response 1"/>
+            <logger level="INFO" doc:name="Log Response 1" message="#['Response WITHOUT variables: ' ++ payload.messages[0].message]"/>
+
+            <!-- Clean up session 1 -->
+            <ms-agentforce:end-agent-conversation doc:name="End session 1"
+                                                  config-ref="Agentforce_Config_New">
+                <ms-agentforce:session-id><![CDATA[#[vars.sessionId1]]]></ms-agentforce:session-id>
+            </ms-agentforce:end-agent-conversation>
+
+            <!-- SCENARIO 2: WITH Variables - Agent should bypass verification -->
+            <logger level="INFO" doc:name="Log Scenario 2" message="=== SCENARIO 2: Start session WITH variables (verifiedContactID=003Ig00000DsENIIA3) ==="/>
+            <ms-agentforce:start-agent-conversation doc:name="Start agent WITH variables"
+                                                     config-ref="Agentforce_Config_New"
+                                                     agent="${config.bot-id-new}"
+                                                     readTimeout="80"
+                                                     readTimeoutUnit="SECONDS">
+                <ms-agentforce:variables>
+                    <ms-agentforce:variable name="verifiedContactID" value="#['003Ig00000DsENIIA3']" type="Text"/>
+                </ms-agentforce:variables>
+            </ms-agentforce:start-agent-conversation>
+
+            <set-variable value="#[payload.sessionId]" variableName="sessionId2" doc:name="Store Session ID 2"/>
+            <logger level="INFO" doc:name="Log Session 2" message="#['Session 2 (with variables) created: ' ++ vars.sessionId2]"/>
+
+            <ms-agentforce:send-message-sync doc:name="Ask about cases (with context)"
+                                             config-ref="Agentforce_Config_New"
+                                             messageSequenceNumber="1"
+                                             readTimeout="80"
+                                             readTimeoutUnit="SECONDS">
+                <ms-agentforce:message><![CDATA[I would like to check on my cases]]></ms-agentforce:message>
+                <ms-agentforce:session-id><![CDATA[#[vars.sessionId2]]]></ms-agentforce:session-id>
+            </ms-agentforce:send-message-sync>
+
+            <set-variable value="#[payload]" variableName="responseWithVariables" doc:name="Store response 2"/>
+            <logger level="INFO" doc:name="Log Response 2" message="#['Response WITH variables: ' ++ payload.messages[0].message]"/>
+
+            <!-- Store sessionId2 as sessionId for cleanup -->
+            <set-variable value="#[vars.sessionId2]" variableName="sessionId" doc:name="Set sessionId for cleanup"/>
+        </munit:execution>
+
+        <munit:validation>
+            <!-- Validate both scenarios completed successfully -->
+            <logger level="INFO" doc:name="Log Validation" message="Validating both scenarios completed successfully"/>
+
+            <!-- Validate SCENARIO 1: WITHOUT variables - got response -->
+            <munit-tools:assert-that doc:name="Assert WITHOUT vars: has messages"
+                                     expression="#[vars.responseWithoutVariables.messages]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert WITHOUT vars: messages not empty"
+                                     expression="#[sizeOf(vars.responseWithoutVariables.messages)]"
+                                     is="#[MunitTools::greaterThan(0)]"/>
+
+            <!-- Validate SCENARIO 2: WITH variables - got response -->
+            <munit-tools:assert-that doc:name="Assert WITH vars: has messages"
+                                     expression="#[vars.responseWithVariables.messages]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert WITH vars: messages not empty"
+                                     expression="#[sizeOf(vars.responseWithVariables.messages)]"
+                                     is="#[MunitTools::greaterThan(0)]"/>
+
+            <!-- VALIDATE THE BEHAVIOR DIFFERENCE -->
+            <logger level="INFO" doc:name="Log Full Comparison"
+                    message="#['WITHOUT vars - Type: ' ++ vars.responseWithoutVariables.messages[0]['type'] ++ ', Message: ' ++ vars.responseWithoutVariables.messages[0].message ++ ' | WITH vars - Type: ' ++ vars.responseWithVariables.messages[0]['type'] ++ ', Message: ' ++ vars.responseWithVariables.messages[0].message]"/>
+
+            <!-- WITHOUT variables: Agent should ask for identity verification -->
+            <munit-tools:assert-that doc:name="Assert WITHOUT vars: asks for verification"
+                                     expression="#[(lower(vars.responseWithoutVariables.messages[0].message) contains 'verify') or (lower(vars.responseWithoutVariables.messages[0].message) contains 'identity') or (lower(vars.responseWithoutVariables.messages[0].message) contains 'username') or (lower(vars.responseWithoutVariables.messages[0].message) contains 'email')]"
+                                     is="#[MunitTools::equalTo(true)]"/>
+
+            <!-- WITH variables: Agent should provide actual case information -->
+            <munit-tools:assert-that doc:name="Assert WITH vars: provides case info"
+                                     expression="#[(lower(vars.responseWithVariables.messages[0].message) contains 'case') or (lower(vars.responseWithVariables.messages[0].message) contains 'subject') or (lower(vars.responseWithVariables.messages[0].message) contains 'status')]"
+                                     is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- Test 2: Send Message with Variables (Continue Session) -->
+    <munit:test name="SendMessageSyncWithVariables_ContinueSession" doc:id="var-test-003">
+        <munit:execution>
+            <logger level="INFO" doc:name="Log Test Start" message="Test: Send message with variables in send-message-sync"/>
+
+            <!-- Create session WITH context -->
+            <ms-agentforce:start-agent-conversation doc:name="Start agent WITH context"
+                                                     config-ref="Agentforce_Config_New"
+                                                     agent="${config.bot-id-new}"
+                                                     readTimeout="80"
+                                                     readTimeoutUnit="SECONDS">
+                <ms-agentforce:variables>
+                    <ms-agentforce:variable name="verifiedContactID" value="#['003Ig00000DsEN8IAN']" type="Text"/>
+                </ms-agentforce:variables>
+            </ms-agentforce:start-agent-conversation>
+
+            <set-variable value="#[payload.sessionId]" variableName="sessionId" doc:name="Store Session ID"/>
+
+            <!-- Send message WITH additional variables in send-message-sync -->
+            <ms-agentforce:send-message-sync doc:name="Send message with variables"
+                                             config-ref="Agentforce_Config_New"
+                                             messageSequenceNumber="1"
+                                             readTimeout="80"
+                                             readTimeoutUnit="SECONDS">
+                <ms-agentforce:message><![CDATA[Show me my orders]]></ms-agentforce:message>
+                <ms-agentforce:session-id><![CDATA[#[vars.sessionId]]]></ms-agentforce:session-id>
+                <ms-agentforce:variables>
+                    <ms-agentforce:variable name="filterStatus" value="#['Activated']" type="Text"/>
+                </ms-agentforce:variables>
+            </ms-agentforce:send-message-sync>
+
+            <logger level="INFO" doc:name="Log Response" message="#['Response: ' ++ payload.messages[0].message]"/>
+        </munit:execution>
+
+        <munit:validation>
+            <munit-tools:assert-that doc:name="Assert messages exist"
+                                     expression="#[payload.messages]"
+                                     is="#[MunitTools::notNullValue()]"/>
+
+            <munit-tools:assert-that doc:name="Assert has at least one message"
+                                     expression="#[sizeOf(payload.messages)]"
+                                     is="#[MunitTools::greaterThan(0)]"/>
+
+            <munit-tools:assert-that doc:name="Assert type is Inform"
+                                     expression="#[payload.messages[0].'type']"
+                                     is="#[MunitTools::equalTo('Inform')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- After each test: End the session if it exists -->
+    <munit:after-test name="CleanupSession" doc:id="cleanup-session">
+        <try>
+            <choice>
+                <when expression="#[vars.sessionId != null]">
+                    <logger level="INFO" doc:name="Log Cleanup" message="#['Ending session: ' ++ vars.sessionId]"/>
+                    <ms-agentforce:end-agent-conversation doc:name="End agent conversation"
+                                                          config-ref="Agentforce_Config_New">
+                        <ms-agentforce:session-id><![CDATA[#[vars.sessionId]]]></ms-agentforce:session-id>
+                    </ms-agentforce:end-agent-conversation>
+                    <logger level="INFO" doc:name="Log Cleanup Success" message="Session ended successfully"/>
+                </when>
+            </choice>
+            <error-handler>
+                <on-error-continue type="ANY">
+                    <logger level="WARN" doc:name="Log Cleanup Error" message="#['Failed to end session: ' ++ error.description]"/>
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </munit:after-test>
+
+</mule>

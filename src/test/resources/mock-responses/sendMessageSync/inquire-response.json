@@ -1,0 +1,55 @@
+{
+  "messages": [
+    {
+      "type": "Inquire",
+      "feedbackId": "77067047-5df3-47b9-a2c3-2f672a5ea2f0",
+      "collect": [
+        {
+          "targetType": "copilotActionInput/CreateAccount_179840627f1c603",
+          "targetProperty": "accountName",
+          "data": null
+        },
+        {
+          "targetType": "copilotActionInput/CreateAccount_179840627f1c603",
+          "targetProperty": "accountDescription",
+          "data": null
+        },
+        {
+          "targetType": "copilotActionInput/CreateAccount_179840627f1c603",
+          "targetProperty": "accountIndustry",
+          "data": null
+        },
+        {
+          "targetType": "copilotActionInput/CreateAccount_179840627f1c603",
+          "targetProperty": "accountWebsite",
+          "data": null
+        },
+        {
+          "targetType": "copilotActionInput/CreateAccount_179840627f1c603",
+          "targetProperty": "phoneNumber",
+          "data": null
+        }
+      ],
+      "id": "4631595c-5c8f-4276-b1e3-90c05d10b8b2",
+      "metrics": {},
+      "planId": "77067047-5df3-47b9-a2c3-2f672a5ea2f0",
+      "isContentSafe": true,
+      "message": "Let's get started with creating a new account. Please provide the following details."
+    }
+  ],
+  "_links": {
+    "self": null,
+    "messages": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages"
+    },
+    "messagesStream": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84/messages/stream"
+    },
+    "session": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/agents/0XxJ9000000si5iKAA/sessions"
+    },
+    "end": {
+      "href": "https://api.salesforce.com/einstein/ai-agent/v1/sessions/019d0aac-dcd0-7368-936c-106bffe75e84"
+    }
+  }
+}

@@ -2,14 +2,18 @@ package com.mulesoft.connector.agentforce.internal.botapi.helpers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mulesoft.connector.agentforce.api.metadata.AgentResponseMetadata;
 import com.mulesoft.connector.agentforce.api.metadata.InvokeAgentResponseAttributes;
-import com.mulesoft.connector.agentforce.internal.config.AgentforceConfiguration;
+import com.mulesoft.connector.agentforce.api.metadata.AgentBusinessDataResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentConversationResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentMetadataResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotContinueSessionRequestDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotRecord;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.BotSessionRequestDTO;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.AgentApiResponseDTO;
 import com.mulesoft.connector.agentforce.internal.botapi.dto.InstanceConfigDTO;
+import com.mulesoft.connector.agentforce.api.request.Variable;
+import com.mulesoft.connector.agentforce.internal.botapi.dto.VariableDTO;
 import com.mulesoft.connector.agentforce.internal.connection.AgentforceConnection;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
 import com.mulesoft.connector.agentforce.internal.params.ReadTimeoutParams;
@@ -37,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -100,7 +105,8 @@ public class BotRequestHelper {
   }
 
 
-  public void startSession(String agentId, boolean byPassUser, ReadTimeoutParams readTimeout,
+  public void startSession(String agentId, boolean byPassUser, List<Variable> variables,
+                           ReadTimeoutParams readTimeout,
                            CompletionCallback<InputStream, InvokeAgentResponseAttributes> callback)
       throws IOException {
 
@@ -108,7 +114,8 @@ public class BotRequestHelper {
         + agentId + URI_BOT_API_SESSIONS;
     String externalSessionKey = UUID.randomUUID().toString();
     String endpoint = agentforceConnection.getSalesforceOrgUrl();
-    BotSessionRequestDTO payload = createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser);
+    BotSessionRequestDTO payload =
+        createStartSessionRequestPayload(externalSessionKey, endpoint, byPassUser, variables);
 
     log.debug("Agentforce start session details. Request URL: {}, external Session Key:{}," +
         " endpoint: {}", startSessionUrl, externalSessionKey, endpoint);
@@ -129,7 +136,7 @@ public class BotRequestHelper {
             + URI_BOT_API_MESSAGES;
 
     BotContinueSessionRequestDTO payload =
-        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber);
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber, Collections.emptyList());
 
     log.info("Agentforce continue session details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
 
@@ -138,6 +145,27 @@ public class BotRequestHelper {
 
     sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, readTimeout, callback,
                 this::parseResponseForContinueSession);
+  }
+
+  public void sendMessageSync(InputStream message, String sessionId, int messageSequenceNumber,
+                              List<Variable> variables, ReadTimeoutParams readTimeout,
+                              CompletionCallback<InputStream, AgentResponseMetadata> callback)
+      throws IOException {
+
+    String continueSessionUrl =
+        agentforceConnection.getApiInstanceUrl() + V6_URI_BOT_API_BOTS + URI_BOT_API_SESSIONS + SLASH + sessionId
+            + URI_BOT_API_MESSAGES;
+
+    BotContinueSessionRequestDTO payload =
+        createContinueSessionRequestPayload(IOUtils.toString(message), messageSequenceNumber, variables);
+
+    log.info("Agentforce send message sync details. Request URL: {}, Session ID:{}", continueSessionUrl, sessionId);
+
+    InputStream payloadStream = new ByteArrayInputStream(objectMapper.writeValueAsString(payload)
+        .getBytes(StandardCharsets.UTF_8));
+
+    sendRequest(continueSessionUrl, HTTP_METHOD_POST, payloadStream, readTimeout, callback,
+                this::parseResponseForSendMessageSync);
   }
 
   public void endSession(String sessionId, ReadTimeoutParams readTimeout,
@@ -153,22 +181,36 @@ public class BotRequestHelper {
 
   private BotSessionRequestDTO createStartSessionRequestPayload(String externalSessionKey,
                                                                 String endpoint,
-                                                                boolean byPassUser) {
+                                                                boolean byPassUser,
+                                                                List<Variable> variables) {
 
     InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
     instanceConfigDTO.setEndpoint(endpoint);
-    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser);
+    List<VariableDTO> variableDTOs = convertToVariableDTOs(variables);
+    return new BotSessionRequestDTO(externalSessionKey, instanceConfigDTO, byPassUser, variableDTOs);
   }
 
   private BotContinueSessionRequestDTO createContinueSessionRequestPayload(String message,
-                                                                           int messageSequenceNumber) {
+                                                                           int messageSequenceNumber,
+                                                                           List<Variable> variables) {
 
     BotContinueSessionRequestDTO.Message messageDTO = new BotContinueSessionRequestDTO.Message();
     messageDTO.setText(message);
     messageDTO.setSequenceId(messageSequenceNumber);
     messageDTO.setType(CONTINUE_SESSION_MESSAGE_TYPE_TEXT);
 
-    return new BotContinueSessionRequestDTO(messageDTO);
+    List<VariableDTO> variableDTOs = convertToVariableDTOs(variables);
+    return new BotContinueSessionRequestDTO(messageDTO, variableDTOs);
+  }
+
+  private List<VariableDTO> convertToVariableDTOs(List<Variable> variables) {
+    if (variables.isEmpty()) {
+      return null;
+    }
+
+    return variables.stream()
+        .map(v -> new VariableDTO(v.getName(), v.getValue(), v.getType()))
+        .collect(Collectors.toList());
   }
 
   private MultiMap<String, String> addConnectionHeaders(String accessToken) {
@@ -233,7 +275,7 @@ public class BotRequestHelper {
                                                                  rootNode, InvokeAgentResponseAttributes.class));
       responseDTO.setSessionId(getTextValue(rootNode, SESSION_ID));
       responseDTO.setText(getMessageText(rootNode));
-    } catch (Exception e) {
+    } catch (IOException e) {
       throw new ModuleException("Error in parsing response ", AGENT_OPERATIONS_FAILURE, e);
     }
     return responseDTO;
@@ -256,10 +298,10 @@ public class BotRequestHelper {
     }
   }
 
-  private <T> void sendRequest(String url, String httpMethod, InputStream payloadStream,
-                               ReadTimeoutParams readTimeout,
-                               CompletionCallback<T, InvokeAgentResponseAttributes> callback,
-                               Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
+  private <T, A> void sendRequest(String url, String httpMethod, InputStream payloadStream,
+                                  ReadTimeoutParams readTimeout,
+                                  CompletionCallback<T, A> callback,
+                                  Function<InputStream, Result<T, A>> responseParser) {
     log.debug("Agentforce request details. Request URL: {}", url);
 
     HttpRequestOptions httpRequestOptions = HttpRequestOptions.builder()
@@ -278,9 +320,9 @@ public class BotRequestHelper {
     completableFuture.whenComplete((response, exception) -> handleResponse(response, exception, callback, responseParser));
   }
 
-  private <T> void handleResponse(HttpResponse response, Throwable exception,
-                                  CompletionCallback<T, InvokeAgentResponseAttributes> callback,
-                                  Function<InputStream, Result<T, InvokeAgentResponseAttributes>> responseParser) {
+  private <T, A> void handleResponse(HttpResponse response, Throwable exception,
+                                     CompletionCallback<T, A> callback,
+                                     Function<InputStream, Result<T, A>> responseParser) {
     if (exception != null) {
       log.debug("Exception in bot api call ", exception);
       callback.error(exception);
@@ -292,7 +334,7 @@ public class BotRequestHelper {
     }
 
     try {
-      Result<T, InvokeAgentResponseAttributes> result = responseParser.apply(contentStream);
+      Result<T, A> result = responseParser.apply(contentStream);
       callback.success(result);
     } catch (Exception e) {
       log.debug("Error while parsing response", e);
@@ -322,7 +364,7 @@ public class BotRequestHelper {
     }
   }
 
-  private InputStream parseHttpResponse(HttpResponse httpResponse, CompletionCallback callback) {
+  private <T, A> InputStream parseHttpResponse(HttpResponse httpResponse, CompletionCallback<T, A> callback) {
 
     int statusCode = httpResponse.getStatusCode();
     log.debug("Parsing Http Response, statusCode = {}", statusCode);
@@ -369,5 +411,92 @@ public class BotRequestHelper {
         .method(httpMethod)
         .entity(httpEntity)
         .build();
+  }
+
+  Result<InputStream, AgentResponseMetadata> parseResponseForSendMessageSync(InputStream responseStream) {
+    try {
+      AgentApiResponseDTO apiResponse =
+          objectMapper.readValue(responseStream, AgentApiResponseDTO.class);
+
+      // Build payload with business data
+      AgentBusinessDataResponseDTO businessData = buildBusinessDataPayload(apiResponse);
+
+      // Build metadata (no business data)
+      AgentResponseMetadata metadata = buildMetadata(apiResponse);
+
+      return Result.<InputStream, AgentResponseMetadata>builder()
+          .output(toInputStream(objectMapper.writeValueAsString(businessData), StandardCharsets.UTF_8))
+          .attributes(metadata)
+          .attributesMediaType(MediaType.APPLICATION_JAVA)
+          .mediaType(MediaType.APPLICATION_JSON)
+          .build();
+
+    } catch (IOException e) {
+      throw new ModuleException("Error parsing send message sync response", AGENT_OPERATIONS_FAILURE, e);
+    }
+  }
+
+  AgentBusinessDataResponseDTO buildBusinessDataPayload(AgentApiResponseDTO apiResponse) {
+    List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
+    if (messages == null) {
+      return new AgentBusinessDataResponseDTO(java.util.Collections.emptyList());
+    }
+    return new AgentBusinessDataResponseDTO(
+                                            messages.stream()
+                                                .map(this::convertToBusinessDataMessage)
+                                                .collect(Collectors.toList()));
+  }
+
+  private AgentBusinessDataResponseDTO.BusinessDataMessage convertToBusinessDataMessage(
+                                                                                        AgentApiResponseDTO.Message msg) {
+    AgentBusinessDataResponseDTO.BusinessDataMessage.Builder builder =
+        new AgentBusinessDataResponseDTO.BusinessDataMessage.Builder(msg.getType());
+
+    MessageTypeHandler handler = MessageTypeHandler.fromTypeName(msg.getType());
+
+    if (handler != null) {
+      handler.apply(msg, builder);
+    } else {
+      log.warn("Unknown message type: {}", msg.getType());
+      builder.message(msg.getMessage());
+    }
+
+    return builder.build();
+  }
+
+  AgentResponseMetadata buildMetadata(AgentApiResponseDTO apiResponse) {
+    AgentResponseMetadata.Links links = apiResponse.getLinks() != null ? convertLinks(apiResponse.getLinks()) : null;
+
+    List<AgentApiResponseDTO.Message> messages = apiResponse.getMessages();
+    List<AgentResponseMetadata.MessageMetadata> messagesMetadata = messages != null
+        ? messages.stream()
+            .map(this::convertToMessageMetadata)
+            .collect(Collectors.toList())
+        : java.util.Collections.emptyList();
+
+    return new AgentResponseMetadata(links, messagesMetadata);
+  }
+
+  private AgentResponseMetadata.MessageMetadata convertToMessageMetadata(AgentApiResponseDTO.Message msg) {
+    return new AgentResponseMetadata.MessageMetadata(msg.getId(), msg.getType(), msg.getFeedbackId(), msg.getPlanId(),
+                                                     Boolean.TRUE.equals(msg.getIsContentSafe()), msg.getMetrics(),
+                                                     msg.getHttpStatus(), msg.getTimestamp(),
+                                                     Boolean.TRUE.equals(msg.getExpected()), msg.getTraceId());
+  }
+
+  private AgentResponseMetadata.Links convertLinks(AgentApiResponseDTO.Links source) {
+    AgentResponseMetadata.Links.Link self =
+        source.getSelf() != null ? new AgentResponseMetadata.Links.Link(source.getSelf().getHref()) : null;
+
+    AgentResponseMetadata.Links.Link messages =
+        source.getMessages() != null ? new AgentResponseMetadata.Links.Link(source.getMessages().getHref()) : null;
+
+    AgentResponseMetadata.Links.Link session =
+        source.getSession() != null ? new AgentResponseMetadata.Links.Link(source.getSession().getHref()) : null;
+
+    AgentResponseMetadata.Links.Link end =
+        source.getEnd() != null ? new AgentResponseMetadata.Links.Link(source.getEnd().getHref()) : null;
+
+    return new AgentResponseMetadata.Links(self, messages, session, end);
   }
 }
