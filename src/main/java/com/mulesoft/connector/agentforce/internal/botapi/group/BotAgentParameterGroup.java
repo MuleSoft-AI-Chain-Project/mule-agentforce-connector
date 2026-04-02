@@ -1,13 +1,19 @@
 package com.mulesoft.connector.agentforce.internal.botapi.group;
 
+import com.mulesoft.connector.agentforce.api.request.Variable;
 import com.mulesoft.connector.agentforce.internal.botapi.metadata.AgentListValueProvider;
 import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.annotation.values.OfValues;
+
+import java.util.List;
 
 public class BotAgentParameterGroup {
 
@@ -16,6 +22,7 @@ public class BotAgentParameterGroup {
   @OfValues(AgentListValueProvider.class)
   @Expression(value = ExpressionSupport.NOT_SUPPORTED)
   @DisplayName("Agent List")
+  @Example("0Xx8d00000000ABCDE")
   private String agent;
 
   public String getAgent() {
@@ -31,6 +38,19 @@ public class BotAgentParameterGroup {
 
   public boolean getByPassUser() {
     return byPassUser;
+  }
+
+  @Parameter
+  @Placement(order = 3)
+  @Optional
+  @NullSafe
+  @DisplayName("Agent Variables")
+  @Expression(ExpressionSupport.SUPPORTED)
+  @Summary("Array of custom and context agent variables ")
+  private List<Variable> variables;
+
+  public List<Variable> getVariables() {
+    return variables;
   }
 
 }

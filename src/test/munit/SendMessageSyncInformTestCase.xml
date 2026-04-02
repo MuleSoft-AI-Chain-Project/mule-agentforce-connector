@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+
+    <munit:config name="SendMessageSyncInformTestCase.xml"/>
+
+    <munit:before-test name="SendMessageSyncInform_Before_Test" doc:id="be3f67e1-e8d7-4d88-963a-81057974c9d7" >
+        <ms-agentforce:start-agent-conversation agent="${config.bot-id-new}" doc:name="Start agent" doc:id="9b81ccfe-df4d-4e58-bf0a-75eec9fe3679" config-ref="Agentforce_Config_New" readTimeout="80" readTimeoutUnit="SECONDS"/>
+        <set-variable value="#[output application/java&#10;---&#10;payload.sessionId]" doc:name="Set sessionId variable" doc:id="a81d4da9-331b-40fc-9cd4-e7930570d780" variableName="sessId" />
+        <logger level="INFO" doc:name="Log sessionId" doc:id="301239c9-3db7-4896-84e8-3febe24636c5" message="#['Session ID: ' ++ vars.sessId]"/>
+    </munit:before-test>
+
+    <!-- Inform - General FAQ (Knowledge Article response) -->
+    <munit:test name="SendMessageSync_InformType_KnowledgeArticle" doc:id="test-case-001" >
+        <munit:execution >
+            <logger level="INFO" doc:name="Log Test Start" message="General FAQ triggers Inform with knowledge article"/>
+
+            <ms-agentforce:send-message-sync doc:name="Ask about return policy"
+                                             config-ref="Agentforce_Config_New"
+                                             messageSequenceNumber="1"
+                                             readTimeout="80"
+                                             readTimeoutUnit="SECONDS">
+                <ms-agentforce:message><![CDATA[What is your return policy?]]></ms-agentforce:message>
+                <ms-agentforce:session-id><![CDATA[#[vars.sessId]]]></ms-agentforce:session-id>
+            </ms-agentforce:send-message-sync>
+
+            <logger level="INFO" doc:name="Log Response" message="#['Message type: ' ++ payload.messages[0].'type' ++ ', Has citedReferences: ' ++ (payload.messages[0].citedReferences != null)]"/>
+        </munit:execution>
+        <munit:validation >
+            <!-- Validate payload structure -->
+            <munit-tools:assert-that doc:name="Assert payload.messages exists"
+                                     expression="#[payload.messages]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messages not empty"
+                                     expression="#[sizeOf(payload.messages)]"
+                                     is="#[MunitTools::greaterThan(0)]"/>
+            <munit-tools:assert-that doc:name="Assert type is Inform"
+                                     expression="#[payload.messages[0].'type']"
+                                     is="#[MunitTools::equalTo('Inform')]"/>
+            <munit-tools:assert-that doc:name="Assert message not empty"
+                                     expression="#[sizeOf(payload.messages[0].message)]"
+                                     is="#[MunitTools::greaterThan(0)]"/>
+            <munit-tools:assert-that doc:name="Assert citedReferences field exists"
+                                     expression="#[payload.messages[0].citedReferences]"
+                                     is="#[MunitTools::notNullValue()]"/>
+
+            <!-- Validate attributes structure -->
+            <munit-tools:assert-that doc:name="Assert attributes exist"
+                                     expression="#[attributes]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert messagesMetadata exists"
+                                     expression="#[attributes.messagesMetadata]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert metadata type is Inform"
+                                     expression="#[attributes.messagesMetadata[0].'type']"
+                                     is="#[MunitTools::equalTo('Inform')]"/>
+            <munit-tools:assert-that doc:name="Assert metadata id exists"
+                                     expression="#[attributes.messagesMetadata[0].id]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert feedbackId exists"
+                                     expression="#[attributes.messagesMetadata[0].feedbackId]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert planId exists"
+                                     expression="#[attributes.messagesMetadata[0].planId]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert isContentSafe exists"
+                                     expression="#[attributes.messagesMetadata[0].isContentSafe]"
+                                     is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that doc:name="Assert links exist"
+                                     expression="#[attributes.links]"
+                                     is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:after-test name="SendMessageSyncInform_After_Test" doc:id="a18aeb95-427d-4bc9-816d-d68c803ed5c6" >
+        <ms-agentforce:end-agent-conversation doc:name="End agent conversation" doc:id="003b5bf5-6baa-4540-9529-148e50e256ec" config-ref="Agentforce_Config_New" readTimeout="90" readTimeoutUnit="SECONDS">
+            <ms-agentforce:session-id ><![CDATA[#[vars.sessId]]]></ms-agentforce:session-id>
+        </ms-agentforce:end-agent-conversation>
+    </munit:after-test>
+</mule>

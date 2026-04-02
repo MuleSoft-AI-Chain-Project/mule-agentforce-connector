@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "id": "3c907722-710d-403d-9d7a-7d43f07a5183",
+      "type": "Inform",
+      "message": "I'm sorry I couldn't help with that. Let me connect you with an agent who can."
+    },
+    {
+      "id": "a133c185-73a7-4adf-b6d9-b7fd62babb4e",
+      "type": "Escalate",
+      "feedbackId": "9247bbd8-5ed9-11ee-8c99-0242ac120002",
+      "targets": [
+        {
+          "id": "0RKxx0000004C92GAE",
+          "type": "Flow",
+          "label": "Standard_Transfer_Flow"
+        }
+      ]
+    }
+  ],
+  "_links": {
+    "self": { "href": "/einstein/ai-agent/v1/sessions/session-id/messages" },
+    "messages": { "href": "/einstein/ai-agent/v1/sessions/session-id/messages" },
+    "session": { "href": "/einstein/ai-agent/v1/sessions/session-id" },
+    "end": { "href": "/einstein/ai-agent/v1/sessions/session-id/end" }
+  }
+}
