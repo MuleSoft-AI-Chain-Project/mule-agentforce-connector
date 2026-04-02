@@ -1,8 +1,6 @@
 package com.mulesoft.connector.agentforce.internal.extension;
 
 
-import com.mulesoft.connector.agentforce.internal.proxy.DefaultHttpProxyConfig;
-import com.mulesoft.connector.agentforce.internal.proxy.HttpProxyConfig;
 import com.mulesoft.connector.agentforce.internal.config.AgentforceConfiguration;
 import com.mulesoft.connector.agentforce.internal.error.AgentforceErrorType;
 import com.mulesoft.connector.agentforce.api.proxy.DefaultHttpProxyConfig;
