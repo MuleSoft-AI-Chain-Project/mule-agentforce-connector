@@ -289,6 +289,32 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>default-config</id>
+            <activation>
+                <property>
+                    <name>!mule.security.model</name> <!-- if mule.security.model does not exist -->
+                </property>
+            </activation>
+            <properties>
+                <keystore.ks.type>jks</keystore.ks.type>
+            </properties>
+        </profile>
+        <profile>
+            <id>fips-config</id>
+            <activation>
+                <property>
+                    <name>mule.security.model</name>
+                    <value>fips140-2</value> <!-- if mule.security.model == fips140-2 -->
+                </property>
+            </activation>
+            <properties>
+                <keystore.ks.type>bcfks</keystore.ks.type>
+            </properties>
+        </profile>
+    </profiles>
+
     <repositories>
         <repository>
             <id>mule-releases</id>
