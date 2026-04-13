@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
+
+    <munit:config name="TlsOperationsFipsJksNegativeTestCase.xml" ignore="${fips.ignore.fips.only.tests}"/>
+
+    <!-- Negative test: TLS configuration with JKS keystore should be rejected in FIPS mode.
+         Uses existing 'Agentforce_Configuration_TLS' from config.xml (uses type="jks").
+         In FIPS mode, JKS keystores are non-compliant and should fail with connectivity error. -->
+    <munit:test name="fips-tls-jks-rejected-test"
+                doc:name="TLS JKS keystore rejected in FIPS"
+                expectedErrorType="ms-agentforce:CONNECTIVITY">
+        <munit:execution>
+            <ms-agentforce:start-agent-conversation agent="${config.bot-id}"
+                doc:name="Start agent with JKS (should fail in FIPS)"
+                doc:id="9b81ccfe-df4d-4e58-bf0a-75eec9fe3679"
+                config-ref="Agentforce_Configuration_TLS" />
+        </munit:execution>
+    </munit:test>
+
+</mule>

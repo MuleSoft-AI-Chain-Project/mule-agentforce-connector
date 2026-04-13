@@ -57,4 +57,13 @@ Commenting this code as cam tool does not support this proxy. Need some other pu
             <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="test" tokenUrl="${config.salesforce-org}" />
         </ms-agentforce:oauth-client-credentials-connection>
     </ms-agentforce:config>
+
+    <ms-agentforce:config name="Agentforce_Configuration_TLS_FIPS" doc:name="Agentforce Configuration FIPS" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1e" >
+        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
+            <tls:context >
+                <tls:key-store type="bcfks" path="${m4-mutual-tls-fips.keyStore}" keyPassword="${m4-mutual-tls-fips.keyStorePassword}" password="${m4-mutual-tls-fips.keyStorePassword}" />
+            </tls:context>
+            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
+        </ms-agentforce:oauth-client-credentials-connection>
+    </ms-agentforce:config>
 </mule>
