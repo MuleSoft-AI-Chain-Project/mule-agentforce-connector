@@ -11,7 +11,11 @@
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 		http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd">
 
-    <munit:config name="TlsOperationsTestCase.xml"/>
+    <!-- Import JKS configs for non-FIPS testing -->
+    <!-- This import will fail in FIPS mode, so the entire suite is skipped -->
+    <import file="config-jks.xml" />
+
+    <munit:config name="TlsOperationsTestCase.xml" ignore="${fips.ignore.non.compliant.tests}"/>
 
     <munit:before-test name="TestOperationBefore_Test" doc:id="be3f67e1-e8d7-4d88-963a-81057974c9d7">
         <ms-agentforce:start-agent-conversation agent="${config.bot-id}" doc:name="Start agent" doc:id="9b81ccfe-df4d-4e58-bf0a-75eec9fe3679" config-ref="${test.config.ref}" />
@@ -31,7 +35,7 @@
         </munit:validation>
     </munit:test>
 
-    <munit:test name="TlsOperation_ConnectivityError" doc:id="c7a7b3c8-bbca-4e75-915f-4c9637c48f6c" expectedErrorType="ms-agentforce:CONNECTIVITY" ignore="${fips.ignore.non.compliant.tests}">
+    <munit:test name="TlsOperation_ConnectivityError" doc:id="c7a7b3c8-bbca-4e75-915f-4c9637c48f6c" expectedErrorType="ms-agentforce:CONNECTIVITY">
         <munit:execution>
             <ms-agentforce:continue-agent-conversation doc:name="Continue agent conversation with TLS error" doc:id="3040a1b1-e1ed-4832-a406-fa12218250a9" config-ref="Agentforce_Configuration_TLS_ERROR" messageSequenceNumber="1">
                 <ms-agentforce:message><![CDATA[Get me customer records from salesforce for user Test]]></ms-agentforce:message>
