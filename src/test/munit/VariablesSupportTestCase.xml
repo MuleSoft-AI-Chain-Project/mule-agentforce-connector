@@ -22,7 +22,7 @@
             <logger level="INFO" doc:name="Log Scenario 1" message="=== SCENARIO 1: Start session WITHOUT variables ==="/>
             <ms-agentforce:start-agent-conversation doc:name="Start agent WITHOUT variables"
                                                      config-ref="Agentforce_Config_New"
-                                                     agent="${config.bot-id-new}"
+                                                     agent="${config.bot-id}"
                                                      readTimeout="80"
                                                      readTimeoutUnit="SECONDS"/>
 
@@ -51,7 +51,7 @@
             <logger level="INFO" doc:name="Log Scenario 2" message="=== SCENARIO 2: Start session WITH variables (verifiedContactID=003Ig00000DsENIIA3) ==="/>
             <ms-agentforce:start-agent-conversation doc:name="Start agent WITH variables"
                                                      config-ref="Agentforce_Config_New"
-                                                     agent="${config.bot-id-new}"
+                                                     agent="${config.bot-id}"
                                                      readTimeout="80"
                                                      readTimeoutUnit="SECONDS">
                 <ms-agentforce:variables>
@@ -122,7 +122,7 @@
             <!-- Create session WITH context -->
             <ms-agentforce:start-agent-conversation doc:name="Start agent WITH context"
                                                      config-ref="Agentforce_Config_New"
-                                                     agent="${config.bot-id-new}"
+                                                     agent="${config.bot-id}"
                                                      readTimeout="80"
                                                      readTimeoutUnit="SECONDS">
                 <ms-agentforce:variables>
