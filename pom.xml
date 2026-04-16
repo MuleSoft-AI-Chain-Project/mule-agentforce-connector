@@ -65,6 +65,9 @@
         <munit.version>3.7.0</munit.version>
         <mtf.tools.version>1.2.0</mtf.tools.version>
         <runtimeProduct>MULE_EE</runtimeProduct>
+        <fips.ignore.non.compliant.tests>false</fips.ignore.non.compliant.tests>
+        <fips.ignore.fips.only.tests>true</fips.ignore.fips.only.tests>
+        <test.config.ref>Agentforce_Configuration_TLS</test.config.ref>
     </properties>
 
     <dependencies>
@@ -288,6 +291,35 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <property>
+                    <name>!mule.security.model</name>
+                </property>
+            </activation>
+            <properties>
+                <fips.ignore.non.compliant.tests>false</fips.ignore.non.compliant.tests>
+                <fips.ignore.fips.only.tests>true</fips.ignore.fips.only.tests>
+                <test.config.ref>Agentforce_Configuration_TLS</test.config.ref>
+            </properties>
+        </profile>
+        <profile>
+            <id>fips-test-exclusion</id>
+            <activation>
+                <property>
+                    <name>mule.security.model</name>
+                </property>
+            </activation>
+            <properties>
+                <fips.ignore.non.compliant.tests>true</fips.ignore.non.compliant.tests>
+                <fips.ignore.fips.only.tests>false</fips.ignore.fips.only.tests>
+                <test.config.ref>Agentforce_Configuration_TLS_FIPS</test.config.ref>
+            </properties>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
