@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:ms-agentforce="http://www.mulesoft.org/schema/mule/ms-agentforce"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/ms-agentforce http://www.mulesoft.org/schema/mule/ms-agentforce/current/mule-ms-agentforce.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <!-- JKS-based configs - ONLY for non-FIPS environments -->
+    <!-- DO NOT IMPORT THIS FILE IN FIPS MODE -->
+
+    <ms-agentforce:config name="Agentforce_Configuration_TLS" doc:name="Agentforce Configuration" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1d" >
+        <ms-agentforce:oauth-client-credentials-connection connectionTimeout="20" connectionTimeoutUnit="SECONDS" connectionIdleTimeout="20" connectionIdleTimeoutUnit="SECONDS">
+            <tls:context >
+                <tls:key-store type="jks" path="${m4-mutual-tls.keyStore}" keyPassword="${m4-mutual-tls.keyStorePassword}" password="${m4-mutual-tls.keyStorePassword}" />
+            </tls:context>
+            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="${config.client-secret}" tokenUrl="${config.salesforce-org}" />
+        </ms-agentforce:oauth-client-credentials-connection>
+    </ms-agentforce:config>
+
+    <ms-agentforce:config name="Agentforce_Configuration_TLS_ERROR" doc:name="Agentforce Configuration" doc:id="8214352c-adae-4043-afcd-b64fd1be1a1e" >
+        <ms-agentforce:oauth-client-credentials-connection>
+            <tls:context >
+                <tls:key-store type="jks" path="${m4-mutual-tls.keyStore}" keyPassword="${m4-mutual-tls.keyStorePassword}" password="${m4-mutual-tls.keyStorePassword}" />
+            </tls:context>
+            <ms-agentforce:oauth-client-credentials clientId="${config.client-id}" clientSecret="test" tokenUrl="${config.salesforce-org}" />
+        </ms-agentforce:oauth-client-credentials-connection>
+    </ms-agentforce:config>
+
+</mule>
